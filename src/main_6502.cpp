@@ -88,7 +88,7 @@ struct CPU
 		Data |= (memory[PC] << 8 );
 		PC++;
 
-		Cycles += 2;
+		Cycles -= 2;
 
 		// if you wanted to handle endianness
 		// you would have to swap bytes here
@@ -159,6 +159,7 @@ struct CPU
 					FetchWord( Cycles, memory );
 				memory.WriteWord( 
 					PC - 1, SP, Cycles );
+				SP += 2;				//(forgot to do this during the video, probably need a function to push onto the stack!)
 				PC = SubAddr;
 				Cycles--;
 			} break;
