@@ -8,6 +8,7 @@ using Byte = unsigned char;
 using Word = unsigned short;
 
 using u32 = unsigned int;
+using s32 = signed int;
 
 struct Mem
 {
@@ -122,8 +123,10 @@ struct CPU
 		N = (A & 0b10000000) > 0;
 	}
 
-	void Execute( u32 Cycles, Mem& memory )
+	/** @return the number of cycles that were used */
+	s32 Execute( u32 Cycles, Mem& memory )
 	{
+		const u32 CyclesRequested = Cycles;
 		while ( Cycles > 0 )
 		{
 			Byte Ins = FetchByte( Cycles, memory );			
@@ -170,5 +173,8 @@ struct CPU
 			} break;
 			}
 		}
+
+		const s32 NumCyclesUsed = CyclesRequested - Cycles;
+		return NumCyclesUsed;
 	}
 };

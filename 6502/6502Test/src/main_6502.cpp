@@ -1,17 +1,25 @@
-#include "main_6502.h"
+#include <cstdio>
+#include "gtest/gtest.h"
 
-int main()
-{
-	Mem mem;
-	CPU cpu;
-	cpu.Reset( mem );
-	// start - inline a little program
-	mem[0xFFFC] = CPU::INS_JSR;
-	mem[0xFFFD] = 0x42;
-	mem[0xFFFE] = 0x42;
-	mem[0x4242] = CPU::INS_LDA_IM;
-	mem[0x4243] = 0x84;
-	// end - inline a little program
-	cpu.Execute( 9, mem );
-	return 0;
+#if GTEST_OS_ESP8266 || GTEST_OS_ESP32
+#if GTEST_OS_ESP8266
+extern "C" {
+#endif
+	void setup() {
+		testing::InitGoogleTest();
+	}
+
+	void loop() { RUN_ALL_TESTS(); }
+
+#if GTEST_OS_ESP8266
 }
+#endif
+
+#else
+
+GTEST_API_ int main( int argc, char **argv ) {
+	printf( "Running main() from %s\n", __FILE__ );
+	testing::InitGoogleTest( &argc, argv );
+	return RUN_ALL_TESTS();
+}
+#endif
