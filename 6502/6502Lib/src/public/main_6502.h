@@ -41,7 +41,7 @@ struct Mem
 	void WriteWord( 
 		Word Value, 
 		u32 Address, 
-		u32& Cycles )
+		s32& Cycles )
 	{
 		Data[Address]		= Value & 0xFF;
 		Data[Address + 1]   = (Value >> 8);
@@ -66,14 +66,19 @@ struct CPU
 
 	void Reset( Mem& memory )
 	{
-		PC = 0xFFFC;
+		Reset( 0xFFFC, memory );
+	}
+
+	void Reset( Word ResetVector, Mem& memory )
+	{
+		PC = ResetVector;
 		SP = 0x0100;
 		C = Z = I = D = B = V = N = 0;
 		A = X = Y = 0;
 		memory.Initialise();
 	}
 
-	Byte FetchByte( u32& Cycles, Mem& memory )
+	Byte FetchByte( s32& Cycles, Mem& memory )
 	{
 		Byte Data = memory[PC];
 		PC++;
@@ -81,7 +86,7 @@ struct CPU
 		return Data;
 	}
 
-	Word FetchWord( u32& Cycles, Mem& memory )
+	Word FetchWord( s32& Cycles, Mem& memory )
 	{
 		// 6502 is little endian
 		Word Data = memory[PC];
@@ -100,9 +105,9 @@ struct CPU
 		return Data;
 	}
 
-	Byte ReadByte( 
-		u32& Cycles, 
-		Byte Address, 
+	Byte ReadByte(
+		s32& Cycles,
+		Word Address,
 		Mem& memory )
 	{
 		Byte Data = memory[Address];
@@ -110,11 +115,26 @@ struct CPU
 		return Data;
 	}
 
+	Word ReadWord(
+		s32& Cycles,
+		Word Address,
+		Mem& memory )
+	{
+		Byte LoByte = ReadByte( Cycles, Address, memory );
+		Byte HiByte = ReadByte( Cycles, Address + 1, memory );
+		return LoByte | (HiByte << 8);
+	}
+
 	// opcodes
 	static constexpr Byte
 		INS_LDA_IM = 0xA9,
 		INS_LDA_ZP = 0xA5,
 		INS_LDA_ZPX = 0xB5,
+		INS_LDA_ABS = 0xAD,
+		INS_LDA_ABSX = 0xBD,
+		INS_LDA_ABSY = 0xB9,
+		INS_LDA_INDX = 0xA1,
+		INS_LDA_INDY = 0xB1,
 		INS_JSR = 0x20;
 
 	void LDASetStatus()
@@ -124,9 +144,9 @@ struct CPU
 	}
 
 	/** @return the number of cycles that were used */
-	s32 Execute( u32 Cycles, Mem& memory )
+	s32 Execute( s32 Cycles, Mem& memory )
 	{
-		const u32 CyclesRequested = Cycles;
+		const s32 CyclesRequested = Cycles;
 		while ( Cycles > 0 )
 		{
 			Byte Ins = FetchByte( Cycles, memory );			
@@ -157,6 +177,50 @@ struct CPU
 					Cycles, ZeroPageAddr, memory );
 				LDASetStatus();
 			} break;
+			case INS_LDA_ABS:
+			{
+				Word AbsAddress = FetchWord( Cycles, memory );
+				A = ReadByte( Cycles, AbsAddress, memory );
+			} break;
+			case INS_LDA_ABSX:
+			{
+				Word AbsAddress = FetchWord( Cycles, memory );
+				Word AbsAddressX = AbsAddress + X;
+				A = ReadByte( Cycles, AbsAddressX, memory );
+				if ( AbsAddressX - AbsAddress >= 0xFF )
+				{
+					Cycles--;
+				}
+			} break;
+			case INS_LDA_ABSY:
+			{
+				Word AbsAddress = FetchWord( Cycles, memory );
+				Word AbsAddressY = AbsAddress + Y;
+				A = ReadByte( Cycles, AbsAddressY, memory );
+				if ( AbsAddressY - AbsAddress >= 0xFF )
+				{
+					Cycles--;
+				}
+			} break;
+			case INS_LDA_INDX:
+			{
+				Byte ZPAddress = FetchByte( Cycles, memory );
+				ZPAddress += X;
+				Cycles--;
+				Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
+				A = ReadByte( Cycles, EffectiveAddr, memory );
+			} break;
+			case INS_LDA_INDY:
+			{
+				Byte ZPAddress = FetchByte( Cycles, memory );
+				Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
+				Word EffectiveAddrY = EffectiveAddr + Y;
+				A = ReadByte( Cycles, EffectiveAddrY, memory );
+				if ( EffectiveAddrY - EffectiveAddr >= 0xFF )
+				{
+					Cycles--;
+				}
+			} break;
 			case INS_JSR:
 			{
 				Word SubAddr = 
@@ -169,7 +233,8 @@ struct CPU
 			} break;
 			default:
 			{
-				printf("Instruction not handled %d", Ins );
+				printf("Instruction %d not handled\n", Ins );
+				throw -1;
 			} break;
 			}
 		}
