@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
-#include "main_6502.h"
+#include "m6502.h"
 
 class M6502Test1 : public testing::Test
 {
-public:
-	Mem mem;
-	CPU cpu;
+public:	
+	m6502::Mem mem;
+	m6502::CPU cpu;
 
 	virtual void SetUp()
 	{
@@ -18,8 +18,8 @@ public:
 };
 
 static void VerfifyUnmodifiedFlagsFromLDA( 
-	const CPU& cpu, 
-	const CPU& CPUCopy )
+	const m6502::CPU& cpu, 
+	const m6502::CPU& CPUCopy )
 {
 	EXPECT_EQ( cpu.C, CPUCopy.C );
 	EXPECT_EQ( cpu.I, CPUCopy.I );
@@ -31,6 +31,7 @@ static void VerfifyUnmodifiedFlagsFromLDA(
 TEST_F( M6502Test1, TheCPUDoesNothingWhenWeExecuteZeroCycles )
 {
 	//given:
+	using namespace m6502;
 	constexpr s32 NUM_CYCLES = 0;
 
 	//when:
@@ -43,6 +44,7 @@ TEST_F( M6502Test1, TheCPUDoesNothingWhenWeExecuteZeroCycles )
 TEST_F( M6502Test1, CPUCanExecuteMoreCyclesThanRequestedIfRequiredByTheInstruction )
 {
 	// given:
+	using namespace m6502;
 	mem[0xFFFC] = CPU::INS_LDA_IM;
 	mem[0xFFFD] = 0x84;
 	CPU CPUCopy = cpu;
@@ -58,6 +60,7 @@ TEST_F( M6502Test1, CPUCanExecuteMoreCyclesThanRequestedIfRequiredByTheInstructi
 TEST_F( M6502Test1, LDAImmediateCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	mem[0xFFFC] = CPU::INS_LDA_IM;
 	mem[0xFFFD] = 0x84;
 
@@ -76,6 +79,7 @@ TEST_F( M6502Test1, LDAImmediateCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAImmediateCanAffectTheZeroFlag )
 {
 	// given:
+	using namespace m6502;
 	cpu.A = 0x44;
 	mem[0xFFFC] = CPU::INS_LDA_IM;
 	mem[0xFFFD] = 0x0;
@@ -93,11 +97,10 @@ TEST_F( M6502Test1, LDAImmediateCanAffectTheZeroFlag )
 TEST_F( M6502Test1, LDAZeroPageCanLoadAValueIntoTheARegister )
 {
 	// given:
-	// start - inline a little program
+	using namespace m6502;
 	mem[0xFFFC] = CPU::INS_LDA_ZP;
 	mem[0xFFFD] = 0x42;
 	mem[0x0042] = 0x37;
-	// end - inline a little program
 
 	//when:
 	CPU CPUCopy = cpu;
@@ -114,12 +117,11 @@ TEST_F( M6502Test1, LDAZeroPageCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAZeroPageXCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	cpu.X = 5;
-	// start - inline a little program
 	mem[0xFFFC] = CPU::INS_LDA_ZPX;
 	mem[0xFFFD] = 0x42;
 	mem[0x0047] = 0x37;
-	// end - inline a little program
 
 	//when:
 	CPU CPUCopy = cpu;
@@ -136,12 +138,11 @@ TEST_F( M6502Test1, LDAZeroPageXCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAZeroPageXCanLoadAValueIntoTheARegisterWhenItWraps )
 {
 	// given:
+	using namespace m6502;
 	cpu.X = 0xFF;
-	// start - inline a little program
 	mem[0xFFFC] = CPU::INS_LDA_ZPX;
 	mem[0xFFFD] = 0x80;
 	mem[0x007F] = 0x37;
-	// end - inline a little program
 
 	//when:
 	CPU CPUCopy = cpu;
@@ -158,6 +159,7 @@ TEST_F( M6502Test1, LDAZeroPageXCanLoadAValueIntoTheARegisterWhenItWraps )
 TEST_F( M6502Test1, LDAAbsoluteCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	mem[0xFFFC] = CPU::INS_LDA_ABS;
 	mem[0xFFFD] = 0x80;
 	mem[0xFFFE] = 0x44;	//0x4480
@@ -179,6 +181,7 @@ TEST_F( M6502Test1, LDAAbsoluteCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAAbsoluteXCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	cpu.X = 1;
 	mem[0xFFFC] = CPU::INS_LDA_ABSX;
 	mem[0xFFFD] = 0x80;
@@ -201,6 +204,7 @@ TEST_F( M6502Test1, LDAAbsoluteXCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAAbsoluteXCanLoadAValueIntoTheARegisterWhenItCrossesAPageBoundary )
 {
 	// given:
+	using namespace m6502;
 	cpu.X = 0xFF;
 	mem[0xFFFC] = CPU::INS_LDA_ABSX;
 	mem[0xFFFD] = 0x02;
@@ -223,6 +227,7 @@ TEST_F( M6502Test1, LDAAbsoluteXCanLoadAValueIntoTheARegisterWhenItCrossesAPageB
 TEST_F( M6502Test1, LDAAbsoluteYCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	cpu.Y = 1;
 	mem[0xFFFC] = CPU::INS_LDA_ABSY;
 	mem[0xFFFD] = 0x80;
@@ -245,6 +250,7 @@ TEST_F( M6502Test1, LDAAbsoluteYCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAAbsoluteYCanLoadAValueIntoTheARegisterWhenItCrossesAPageBoundary )
 {
 	// given:
+	using namespace m6502;
 	cpu.Y = 0xFF;
 	mem[0xFFFC] = CPU::INS_LDA_ABSY;
 	mem[0xFFFD] = 0x02;
@@ -267,6 +273,7 @@ TEST_F( M6502Test1, LDAAbsoluteYCanLoadAValueIntoTheARegisterWhenItCrossesAPageB
 TEST_F( M6502Test1, LDAIndirectXCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	cpu.X = 0x04;
 	mem[0xFFFC] = CPU::INS_LDA_INDX;
 	mem[0xFFFD] = 0x02;
@@ -290,6 +297,7 @@ TEST_F( M6502Test1, LDAIndirectXCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAIndirectYCanLoadAValueIntoTheARegister )
 {
 	// given:
+	using namespace m6502;
 	cpu.Y = 0x04;
 	mem[0xFFFC] = CPU::INS_LDA_INDY;
 	mem[0xFFFD] = 0x02;
@@ -313,6 +321,7 @@ TEST_F( M6502Test1, LDAIndirectYCanLoadAValueIntoTheARegister )
 TEST_F( M6502Test1, LDAIndirectYCanLoadAValueIntoTheARegisterWhenItCrossesAPage )
 {
 	// given:
+	using namespace m6502;
 	cpu.Y = 0xFF;
 	mem[0xFFFC] = CPU::INS_LDA_INDY;
 	mem[0xFFFD] = 0x02;

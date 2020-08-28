@@ -10,7 +10,8 @@ else()
 endif()
 
 set  (M6502_SOURCES
-    "src/public/main_6502.h"
+    "src/public/m6502.h"
+	"src/private/m6502.cpp"
     "src/private/main_6502.cpp")
 		
 source_group("src" FILES ${M6502_SOURCES})
