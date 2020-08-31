@@ -280,6 +280,7 @@ void M6502Test1::TestLoadRegisterAbsolute(
 	m6502::Byte m6502::CPU::*RegisterToTest )
 {
 	// given:
+	cpu.Z = cpu.N = true;
 	using namespace m6502;
 	mem[0xFFFC] = OpcodeToTest;
 	mem[0xFFFD] = 0x80;
@@ -322,6 +323,7 @@ void M6502Test1::TestLoadRegisterAbsoluteX(
 	m6502::Byte m6502::CPU::*RegisterToTest )
 {
 	// given:
+	cpu.Z = cpu.N = true;
 	using namespace m6502;
 	cpu.X = 1;
 	mem[0xFFFC] = OpcodeToTest;
@@ -348,6 +350,7 @@ void M6502Test1::TestLoadRegisterAbsoluteY(
 {
 	// given:
 	using namespace m6502;
+	cpu.Z = cpu.N = true;
 	cpu.Y = 1;
 	mem[0xFFFC] = OpcodeToTest;
 	mem[0xFFFD] = 0x80;
@@ -382,7 +385,7 @@ TEST_F( M6502Test1, LDXAbsoluteYCanLoadAValueIntoTheXRegister )
 TEST_F( M6502Test1, LDYAbsoluteXCanLoadAValueIntoTheYRegister )
 {
 	using namespace m6502;
-	TestLoadRegisterAbsoluteY( CPU::INS_LDY_ABSX, &CPU::Y );
+	TestLoadRegisterAbsoluteX( CPU::INS_LDY_ABSX, &CPU::Y );
 }
 
 void M6502Test1::TestLoadRegisterAbsoluteXWhenCrossingPage(
@@ -469,6 +472,7 @@ TEST_F( M6502Test1, LDAIndirectXCanLoadAValueIntoTheARegister )
 {
 	// given:
 	using namespace m6502;
+	cpu.Z = cpu.N = true;
 	cpu.X = 0x04;
 	mem[0xFFFC] = CPU::INS_LDA_INDX;
 	mem[0xFFFD] = 0x02;
@@ -493,6 +497,7 @@ TEST_F( M6502Test1, LDAIndirectYCanLoadAValueIntoTheARegister )
 {
 	// given:
 	using namespace m6502;
+	cpu.Z = cpu.N = true;
 	cpu.Y = 0x04;
 	mem[0xFFFC] = CPU::INS_LDA_INDY;
 	mem[0xFFFD] = 0x02;

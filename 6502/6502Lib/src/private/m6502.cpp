@@ -10,53 +10,96 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		{
 		case INS_LDA_IM:
 		{
-			Byte Value =
-				FetchByte( Cycles, memory );
-			A = Value;
-			LDASetStatus();
+			A = FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDX_IM:
+		{
+			X = FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( X );
+		} break;
+		case INS_LDY_IM:
+		{
+			Y = FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( Y );
 		} break;
 		case INS_LDA_ZP:
 		{
-			Byte ZeroPageAddr =
-				FetchByte( Cycles, memory );
-			A = ReadByte(
-				Cycles, ZeroPageAddr, memory );
-			LDASetStatus();
+			Word Address = AddrZeroPage( Cycles, memory );
+			A = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDX_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			X = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( X );
+		} break;
+		case INS_LDX_ZPY:
+		{
+			Word Address = AddrZeroPageY( Cycles, memory );
+			X = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( X );
+		} break;
+		case INS_LDY_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Y = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( Y );
 		} break;
 		case INS_LDA_ZPX:
 		{
-			Byte ZeroPageAddr =
-				FetchByte( Cycles, memory );
-			ZeroPageAddr += X;
-			Cycles--;
-			A = ReadByte(
-				Cycles, ZeroPageAddr, memory );
-			LDASetStatus();
+			Word Address = AddrZeroPageX( Cycles, memory );
+			A = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDY_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Y = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( Y );
 		} break;
 		case INS_LDA_ABS:
 		{
-			Word AbsAddress = FetchWord( Cycles, memory );
-			A = ReadByte( Cycles, AbsAddress, memory );
+			Word Address = AddrAbsolute( Cycles, memory );
+			A = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDX_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			X = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( X );
+		} break;
+		case INS_LDY_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Y = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( Y );
 		} break;
 		case INS_LDA_ABSX:
 		{
-			Word AbsAddress = FetchWord( Cycles, memory );
-			Word AbsAddressX = AbsAddress + X;
-			A = ReadByte( Cycles, AbsAddressX, memory );
-			if ( AbsAddressX - AbsAddress >= 0xFF )
-			{
-				Cycles--;
-			}
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			A = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDY_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Y = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( Y );
 		} break;
 		case INS_LDA_ABSY:
 		{
-			Word AbsAddress = FetchWord( Cycles, memory );
-			Word AbsAddressY = AbsAddress + Y;
-			A = ReadByte( Cycles, AbsAddressY, memory );
-			if ( AbsAddressY - AbsAddress >= 0xFF )
-			{
-				Cycles--;
-			}
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			A = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_LDX_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			X = ReadByte( Cycles, Address, memory );
+			LoadRegisterSetStatus( X );
 		} break;
 		case INS_LDA_INDX:
 		{
@@ -65,6 +108,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Cycles--;
 			Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
 			A = ReadByte( Cycles, EffectiveAddr, memory );
+			LoadRegisterSetStatus( A );
 		} break;
 		case INS_LDA_INDY:
 		{
@@ -76,6 +120,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			{
 				Cycles--;
 			}
+			LoadRegisterSetStatus( A );
 		} break;
 		case INS_JSR:
 		{
@@ -97,4 +142,57 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 
 	const s32 NumCyclesUsed = CyclesRequested - Cycles;
 	return NumCyclesUsed;
+}
+
+
+m6502::Word m6502::CPU::AddrZeroPage( s32& Cycles, Mem& memory )
+{
+	Byte ZeroPageAddr = FetchByte( Cycles, memory );
+	return ZeroPageAddr;
+}
+
+m6502::Word m6502::CPU::AddrZeroPageX( s32& Cycles, Mem& memory )
+{
+	Byte ZeroPageAddr = FetchByte( Cycles, memory );
+	ZeroPageAddr += X;
+	Cycles--;
+	return ZeroPageAddr;
+}
+
+m6502::Word m6502::CPU::AddrZeroPageY( s32& Cycles, Mem& memory )
+{
+	Byte ZeroPageAddr = FetchByte( Cycles, memory );
+	ZeroPageAddr += Y;
+	Cycles--;
+	return ZeroPageAddr;
+}
+
+m6502::Word m6502::CPU::AddrAbsolute( s32& Cycles, Mem& memory )
+{
+	Word AbsAddress = FetchWord( Cycles, memory );
+	return AbsAddress;
+}
+
+m6502::Word m6502::CPU::AddrAbsoluteX( s32& Cycles, Mem& memory )
+{
+	Word AbsAddress = FetchWord( Cycles, memory );
+	Word AbsAddressX = AbsAddress + X;
+	if ( AbsAddressX - AbsAddress >= 0xFF )
+	{
+		Cycles--;
+	}
+
+	return AbsAddressX;
+}
+
+m6502::Word m6502::CPU::AddrAbsoluteY( s32& Cycles, Mem& memory )
+{
+	Word AbsAddress = FetchWord( Cycles, memory );
+	Word AbsAddressY = AbsAddress + Y;
+	if ( AbsAddressY - AbsAddress >= 0xFF )
+	{
+		Cycles--;
+	}
+
+	return AbsAddressY;
 }

@@ -156,12 +156,33 @@ struct m6502::CPU
 		INS_LDY_ABSX = 0xBC,
 		INS_JSR = 0x20;
 
-	void LDASetStatus()
+	/** Sets the correct Process status after a load register instruction
+	*	- LDA, LDX, LDY
+	*	@Register The A,X or Y Register */
+	void LoadRegisterSetStatus( Byte Register )
 	{
-		Z = (A == 0);
-		N = (A & 0b10000000) > 0;
+		Z = (Register == 0);
+		N = (Register & 0b10000000) > 0;
 	}
 
 	/** @return the number of cycles that were used */
 	s32 Execute( s32 Cycles, Mem& memory );
+
+	/** Addressing mode - Zero page */
+	Word AddrZeroPage( s32& Cycles, Mem& memory );
+
+	/** Addressing mode - Zero page with X offset */
+	Word AddrZeroPageX( s32& Cycles, Mem& memory );
+
+	/** Addressing mode - Zero page with Y offset */
+	Word AddrZeroPageY( s32& Cycles, Mem& memory );
+
+	/** Addressing mode - Absolute */
+	Word AddrAbsolute( s32& Cycles, Mem& memory );
+
+	/** Addressing mode - Absolute with X offset */
+	Word AddrAbsoluteX( s32& Cycles, Mem& memory );
+
+	/** Addressing mode - Absolute with Y offset */
+	Word AddrAbsoluteY( s32& Cycles, Mem& memory );
 };
