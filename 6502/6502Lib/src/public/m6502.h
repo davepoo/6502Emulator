@@ -84,7 +84,7 @@ struct m6502::CPU
 		memory.Initialise();
 	}
 
-	Byte FetchByte( s32& Cycles, Mem& memory )
+	Byte FetchByte( s32& Cycles, const Mem& memory )
 	{
 		Byte Data = memory[PC];
 		PC++;
@@ -92,7 +92,7 @@ struct m6502::CPU
 		return Data;
 	}
 
-	Word FetchWord( s32& Cycles, Mem& memory )
+	Word FetchWord( s32& Cycles, const Mem& memory )
 	{
 		// 6502 is little endian
 		Word Data = memory[PC];
@@ -169,20 +169,20 @@ struct m6502::CPU
 	s32 Execute( s32 Cycles, Mem& memory );
 
 	/** Addressing mode - Zero page */
-	Word AddrZeroPage( s32& Cycles, Mem& memory );
+	Word AddrZeroPage( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Zero page with X offset */
-	Word AddrZeroPageX( s32& Cycles, Mem& memory );
+	Word AddrZeroPageX( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Zero page with Y offset */
-	Word AddrZeroPageY( s32& Cycles, Mem& memory );
+	Word AddrZeroPageY( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Absolute */
-	Word AddrAbsolute( s32& Cycles, Mem& memory );
+	Word AddrAbsolute( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Absolute with X offset */
-	Word AddrAbsoluteX( s32& Cycles, Mem& memory );
+	Word AddrAbsoluteX( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Absolute with Y offset */
-	Word AddrAbsoluteY( s32& Cycles, Mem& memory );
+	Word AddrAbsoluteY( s32& Cycles, const Mem& memory );
 };
