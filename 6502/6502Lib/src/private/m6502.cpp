@@ -99,23 +99,80 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_LDA_INDX:
 		{
-			Byte ZPAddress = FetchByte( Cycles, memory );
-			ZPAddress += X;
-			Cycles--;
-			Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
-			LoadRegister( EffectiveAddr, A );
+			Word Address = AddrIndirectX( Cycles, memory );
+			LoadRegister( Address, A );
+		} break;
+		case INS_STA_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
 		} break;
 		case INS_LDA_INDY:
 		{
-			Byte ZPAddress = FetchByte( Cycles, memory );
-			Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
-			Word EffectiveAddrY = EffectiveAddr + Y;
-			if ( EffectiveAddrY - EffectiveAddr >= 0xFF )
-			{
-				Cycles--;
-			}
-			LoadRegister( EffectiveAddrY, A );
+			Word Address = AddrIndirectY( Cycles, memory );
+			LoadRegister( Address, A );
 		} break;
+		case INS_STA_INDY:
+		{
+			//TODO: AddrIndirectY can consume an extra cycle on boundaries?
+			Word Address = AddrIndirectY( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+			Cycles--;	//TODO: why is this cycle consumed?
+		} break;
+		case INS_STA_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+		} break;
+		case INS_STX_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			WriteByte( X, Cycles, Address, memory );
+		} break;
+		case INS_STY_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			WriteByte( Y, Cycles, Address, memory );
+		} break;
+		case INS_STA_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+		} break;
+		case INS_STX_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			WriteByte( X, Cycles, Address, memory );
+		} break;
+		case INS_STY_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			WriteByte( Y, Cycles, Address, memory );
+		} break;
+		case INS_STA_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+		} break;
+		case INS_STY_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			WriteByte( Y, Cycles, Address, memory );
+		} break;
+		case INS_STA_ABSX:
+		{
+			//TODO: AddrAbsoluteX can consume an extra cycle on boundaries?
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+			Cycles--;	//TODO: why is this cycle consumed?
+		} break;
+		case INS_STA_ABSY:
+		{
+			//TODO: AddrAbsoluteY can consume an extra cycle on boundaries?
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			WriteByte( A, Cycles, Address, memory );
+			Cycles--;	//TODO: why is this cycle consumed?
+		} break;		
 		case INS_JSR:
 		{
 			Word SubAddr =
@@ -190,3 +247,25 @@ m6502::Word m6502::CPU::AddrAbsoluteY( s32& Cycles, const Mem& memory )
 
 	return AbsAddressY;
 }
+
+m6502::Word m6502::CPU::AddrIndirectX( s32& Cycles, const Mem& memory )
+{
+	Byte ZPAddress = FetchByte( Cycles, memory );
+	ZPAddress += X;
+	Cycles--;
+	Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
+	return EffectiveAddr;
+}
+
+m6502::Word m6502::CPU::AddrIndirectY( s32& Cycles, const Mem& memory )
+{
+	Byte ZPAddress = FetchByte( Cycles, memory );
+	Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
+	Word EffectiveAddrY = EffectiveAddr + Y;
+	if ( EffectiveAddrY - EffectiveAddr >= 0xFF )
+	{
+		Cycles--;
+	}
+	return EffectiveAddrY;
+}
+

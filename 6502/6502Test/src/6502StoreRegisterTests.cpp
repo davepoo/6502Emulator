@@ -140,7 +140,7 @@ TEST_F( M6502StoreRegisterTests, STAZeroPageXCanStoreTheARegisterIntoMemory )
 	TestStoreRegisterZeroPageX( CPU::INS_STA_ZPX, &CPU::A );
 }
 
-TEST_F( M6502StoreRegisterTests, STYZeroPageXCanStoreTheARegisterIntoMemory )
+TEST_F( M6502StoreRegisterTests, STYZeroPageXCanStoreTheYRegisterIntoMemory )
 {
 	using namespace m6502;
 	TestStoreRegisterZeroPageX( CPU::INS_STY_ZPX, &CPU::Y );
@@ -152,7 +152,7 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteXCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.X = 0x0F;
-	mem[0xFFFC] = CPU::INS_STX_ABSX;
+	mem[0xFFFC] = CPU::INS_STA_ABSX;
 	mem[0xFFFD] = 0x00;
 	mem[0xFFFE] = 0x80;
 	constexpr s32 EXPECTED_CYCLES = 5;
@@ -163,7 +163,7 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteXCanStoreTheARegisterIntoMemory )
 
 	// then:
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
-	EXPECT_EQ( mem[0x008F], 0x42 );
+	EXPECT_EQ( mem[0x800F], 0x42 );
 	VerfifyUnmodifiedFlagsFromStoreRegister( cpu, CPUCopy );
 }
 
@@ -173,7 +173,7 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteYCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.Y = 0x0F;
-	mem[0xFFFC] = CPU::INS_STX_ABSY;
+	mem[0xFFFC] = CPU::INS_STA_ABSY;
 	mem[0xFFFD] = 0x00;
 	mem[0xFFFE] = 0x80;
 	constexpr s32 EXPECTED_CYCLES = 5;
@@ -184,7 +184,7 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteYCanStoreTheARegisterIntoMemory )
 
 	// then:
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
-	EXPECT_EQ( mem[0x008F], 0x42 );
+	EXPECT_EQ( mem[0x800F], 0x42 );
 	VerfifyUnmodifiedFlagsFromStoreRegister( cpu, CPUCopy );
 }
 
@@ -194,7 +194,7 @@ TEST_F( M6502StoreRegisterTests, STAIndirectXCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.X = 0x0F;
-	mem[0xFFFC] = CPU::INS_STX_INDX;
+	mem[0xFFFC] = CPU::INS_STA_INDX;
 	mem[0xFFFD] = 0x20;
 	mem[0x002F] = 0x00;
 	mem[0x0030] = 0x80;
@@ -217,7 +217,7 @@ TEST_F( M6502StoreRegisterTests, STAIndirectYCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.Y = 0x0F;
-	mem[0xFFFC] = CPU::INS_STX_INDY;
+	mem[0xFFFC] = CPU::INS_STA_INDY;
 	mem[0xFFFD] = 0x20;
 	mem[0x0020] = 0x00;
 	mem[0x0021] = 0x80;
