@@ -114,10 +114,8 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_STA_INDY:
 		{
-			//TODO: AddrIndirectY can consume an extra cycle on boundaries?
-			Word Address = AddrIndirectY( Cycles, memory );
+			Word Address = AddrIndirectY_6( Cycles, memory );
 			WriteByte( A, Cycles, Address, memory );
-			Cycles--;	//TODO: why is this cycle consumed?
 		} break;
 		case INS_STA_ZP:
 		{
@@ -161,27 +159,26 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_STA_ABSX:
 		{
-			//TODO: AddrAbsoluteX can consume an extra cycle on boundaries?
-			Word Address = AddrAbsoluteX( Cycles, memory );
+			Word Address = AddrAbsoluteX_5( Cycles, memory );
 			WriteByte( A, Cycles, Address, memory );
-			Cycles--;	//TODO: why is this cycle consumed?
 		} break;
 		case INS_STA_ABSY:
 		{
-			//TODO: AddrAbsoluteY can consume an extra cycle on boundaries?
-			Word Address = AddrAbsoluteY( Cycles, memory );
+			Word Address = AddrAbsoluteY_5( Cycles, memory );
 			WriteByte( A, Cycles, Address, memory );
-			Cycles--;	//TODO: why is this cycle consumed?
 		} break;		
 		case INS_JSR:
 		{
-			Word SubAddr =
-				FetchWord( Cycles, memory );
-			memory.WriteWord(
-				PC - 1, SP, Cycles );
-			SP += 2;				//(forgot to do this during the video, probably need a function to push onto the stack!)
+			Word SubAddr = FetchWord( Cycles, memory );
+			PushPCToStack( Cycles, memory );	
 			PC = SubAddr;
 			Cycles--;
+		} break;
+		case INS_RTS:
+		{
+			Word ReturnAddress = PopWordFromStack( Cycles, memory );
+			PC = ReturnAddress + 1;	
+			Cycles -= 2;
 		} break;
 		default:
 		{
@@ -236,6 +233,14 @@ m6502::Word m6502::CPU::AddrAbsoluteX( s32& Cycles, const Mem& memory )
 	return AbsAddressX;
 }
 
+m6502::Word m6502::CPU::AddrAbsoluteX_5( s32& Cycles, const Mem& memory )
+{
+	Word AbsAddress = FetchWord( Cycles, memory );
+	Word AbsAddressX = AbsAddress + X;
+	Cycles--;
+	return AbsAddressX;
+}
+
 m6502::Word m6502::CPU::AddrAbsoluteY( s32& Cycles, const Mem& memory )
 {
 	Word AbsAddress = FetchWord( Cycles, memory );
@@ -245,6 +250,14 @@ m6502::Word m6502::CPU::AddrAbsoluteY( s32& Cycles, const Mem& memory )
 		Cycles--;
 	}
 
+	return AbsAddressY;
+}
+
+m6502::Word m6502::CPU::AddrAbsoluteY_5( s32& Cycles, const Mem& memory )
+{
+	Word AbsAddress = FetchWord( Cycles, memory );
+	Word AbsAddressY = AbsAddress + Y;	
+	Cycles--;
 	return AbsAddressY;
 }
 
@@ -266,6 +279,15 @@ m6502::Word m6502::CPU::AddrIndirectY( s32& Cycles, const Mem& memory )
 	{
 		Cycles--;
 	}
+	return EffectiveAddrY;
+}
+
+m6502::Word m6502::CPU::AddrIndirectY_6( s32& Cycles, const Mem& memory )
+{
+	Byte ZPAddress = FetchByte( Cycles, memory );
+	Word EffectiveAddr = ReadWord( Cycles, ZPAddress, memory );
+	Word EffectiveAddrY = EffectiveAddr + Y;
+	Cycles--;
 	return EffectiveAddrY;
 }
 

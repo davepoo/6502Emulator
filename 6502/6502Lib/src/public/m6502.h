@@ -42,23 +42,12 @@ struct m6502::Mem
 		// assert here Address is < MAX_MEM
 		return Data[Address];
 	}
-
-	/** write 2 bytes */
-	void WriteWord( 
-		Word Value, 
-		u32 Address, 
-		s32& Cycles )
-	{
-		Data[Address]		= Value & 0xFF;
-		Data[Address + 1]   = (Value >> 8);
-		Cycles -= 2;
-	}
 };
 
 struct m6502::CPU
 {
 	Word PC;		//program counter
-	Word SP;		//stack pointer
+	Byte SP;		//stack pointer
 
 	Byte A, X, Y;	//registers
 
@@ -78,7 +67,7 @@ struct m6502::CPU
 	void Reset( Word ResetVector, Mem& memory )
 	{
 		PC = ResetVector;
-		SP = 0x0100;
+		SP = 0xFF;
 		C = Z = I = D = B = V = N = 0;
 		A = X = Y = 0;
 		memory.Initialise();
@@ -102,12 +91,6 @@ struct m6502::CPU
 		PC++;
 
 		Cycles -= 2;
-
-		// if you wanted to handle endianness
-		// you would have to swap bytes here
-		// if ( PLATFORM_BIG_ENDIAN )
-		//	SwapBytesInWord(Data)
-
 		return Data;
 	}
 
@@ -131,10 +114,41 @@ struct m6502::CPU
 		return LoByte | (HiByte << 8);
 	}
 
+	/** write 1 byte to memory */
 	void WriteByte( Byte Value, s32& Cycles, Word Address, Mem& memory )
 	{
 		memory[Address] = Value;
 		Cycles--;
+	}
+
+	/** write 2 bytes to memory */
+	void WriteWord(	Word Value, s32& Cycles, Word Address, Mem& memory )
+	{
+		memory[Address] = Value & 0xFF;
+		memory[Address + 1] = (Value >> 8);
+		Cycles -= 2;
+	}
+
+	/** @return the stack pointer as a full 16-bit address (in the 1st page) */
+	Word SPToAddress() const
+	{
+		return 0x100 | SP;
+	}
+
+	/** Push the PC-1 onto the stack */
+	void PushPCToStack( s32& Cycles, Mem& memory )
+	{
+		WriteWord( PC - 1, Cycles, SPToAddress()-1, memory );
+		SP -= 2;
+	}
+
+	/** Pop a 16-bit value from the stack */
+	Word PopWordFromStack( s32& Cycles, Mem& memory )
+	{
+		Word ValueFromStack = ReadWord( Cycles, SPToAddress()+1, memory );
+		SP += 2;
+		Cycles--;
+		return ValueFromStack;
 	}
 
 	// opcodes
@@ -175,8 +189,9 @@ struct m6502::CPU
 		INS_STY_ZP = 0x84,
 		INS_STY_ZPX = 0x94,
 		INS_STY_ABS = 0x8C,
-		
-		INS_JSR = 0x20;
+
+		INS_JSR = 0x20,
+		INS_RTS = 0x60;
 
 	/** Sets the correct Process status after a load register instruction
 	*	- LDA, LDX, LDY
@@ -205,12 +220,27 @@ struct m6502::CPU
 	/** Addressing mode - Absolute with X offset */
 	Word AddrAbsoluteX( s32& Cycles, const Mem& memory );
 
+	/** Addressing mode - Absolute with X offset 
+	*	- Always takes a cycle for the X page boundary) 
+	*	- See "STA Absolute,X" */
+	Word AddrAbsoluteX_5( s32& Cycles, const Mem& memory );	
+
 	/** Addressing mode - Absolute with Y offset */
 	Word AddrAbsoluteY( s32& Cycles, const Mem& memory );
+
+	/** Addressing mode - Absolute with Y offset
+	*	- Always takes a cycle for the Y page boundary)
+	*	- See "STA Absolute,Y" */
+	Word AddrAbsoluteY_5( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Indirect X | Indexed Indirect */
 	Word AddrIndirectX( s32& Cycles, const Mem& memory );
 
 	/** Addressing mode - Indirect Y | Indirect Indexed */
 	Word AddrIndirectY( s32& Cycles, const Mem& memory );
+
+	/** Addressing mode - Indirect Y | Indirect Indexed
+	*	- Always takes a cycle for the Y page boundary)
+	*	- See "STA (Indirect,Y) */
+	Word AddrIndirectY_6( s32& Cycles, const Mem& memory );
 };
