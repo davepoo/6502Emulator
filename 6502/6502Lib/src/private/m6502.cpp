@@ -180,6 +180,25 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			PC = ReturnAddress + 1;	
 			Cycles -= 2;
 		} break;
+		//TODO:
+		//An original 6502 has does not correctly fetch the target 
+		//address if the indirect vector falls on a page boundary
+		//( e.g.$xxFF where xx is any value from $00 to $FF ).
+		//In this case fetches the LSB from $xxFF as expected but 
+		//takes the MSB from $xx00.This is fixed in some later chips 
+		//like the 65SC02 so for compatibility always ensure the 
+		//indirect vector is not at the end of the page.
+		case INS_JMP_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			PC = Address;
+		} break;
+		case INS_JMP_IND:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Address = ReadWord( Cycles, Address, memory );
+			PC = Address;
+		} break;
 		default:
 		{
 			printf( "Instruction %d not handled\n", Ins );
