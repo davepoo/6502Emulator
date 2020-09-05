@@ -153,6 +153,24 @@ struct m6502::CPU
 		SP -= 2;
 	}
 
+	void PushByteOntoStack( s32& Cycles, Byte Value, Mem& memory )
+	{
+		const Word SPWord = SPToAddress();
+		memory[SPWord] = Value;
+		Cycles--;
+		SP--;
+		Cycles--;
+	}
+
+	Byte PopByteFromStack( s32& Cycles, Mem& memory )
+	{
+		SP++;
+		const Word SPWord = SPToAddress();
+		Byte Value = memory[SPWord];
+		Cycles -= 3;
+		return Value;
+	}
+
 	/** Pop a 16-bit value from the stack */
 	Word PopWordFromStack( s32& Cycles, Mem& memory )
 	{
@@ -200,6 +218,13 @@ struct m6502::CPU
 		INS_STY_ZP = 0x84,
 		INS_STY_ZPX = 0x94,
 		INS_STY_ABS = 0x8C,
+
+		INS_TSX = 0xBA,
+		INS_TXS = 0x9A,
+		INS_PHA = 0x48,
+		INS_PLA = 0x68,
+		INS_PHP = 0x08,
+		INS_PLP = 0x28,
 
 		INS_JMP_ABS = 0x4C,
 		INS_JMP_IND = 0x6C,

@@ -199,6 +199,34 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Address = ReadWord( Cycles, Address, memory );
 			PC = Address;
 		} break;
+		case INS_TSX:
+		{
+			X = SP;
+			Cycles--;
+			LoadRegisterSetStatus( X );
+		} break;
+		case INS_TXS:
+		{
+			SP = X;
+			Cycles--;
+		} break;
+		case INS_PHA:
+		{
+			PushByteOntoStack( Cycles, A, memory );
+		} break;
+		case INS_PLA:
+		{
+			A = PopByteFromStack( Cycles, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_PHP:
+		{
+			PushByteOntoStack( Cycles, PS, memory );
+		} break;	
+		case INS_PLP:
+		{
+			PS = PopByteFromStack( Cycles, memory );
+		} break;
 		default:
 		{
 			printf( "Instruction %d not handled\n", Ins );
