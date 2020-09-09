@@ -78,10 +78,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( 2, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x84, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x84, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, 2 );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_TRUE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -110,10 +112,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( 3, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, 3 );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -121,7 +125,7 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.X = 0xCC;
+		cpu.A = 0xCC;
 		cpu.X = 5;
 		switch ( LogicalOp )
 		{
@@ -143,10 +147,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( 4, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, 4 );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -178,10 +184,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -214,10 +222,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -250,10 +260,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -285,10 +297,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -320,10 +334,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -357,10 +373,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -394,10 +412,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -430,10 +450,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( EXPECTED_CYCLES, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, EXPECTED_CYCLES );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 
@@ -464,10 +486,12 @@ public:
 		s32 CyclesUsed = cpu.Execute( 4, mem );
 
 		//then:
-		EXPECT_EQ( cpu.A, DoLogicalOp( 0xCC, 0x37, LogicalOp ) );
+		const Byte ExpectedResult = DoLogicalOp( 0xCC, 0x37, LogicalOp );
+		const bool ExpectedNegative = (ExpectedResult & 0b10000000) > 0;
+		EXPECT_EQ( cpu.A, ExpectedResult );
 		EXPECT_EQ( CyclesUsed, 4 );
 		EXPECT_FALSE( cpu.Flag.Z );
-		EXPECT_FALSE( cpu.Flag.N );
+		EXPECT_EQ( cpu.Flag.N, ExpectedNegative );
 		VerfifyUnmodifiedFlagsFromLogicalOpInstruction( cpu, CPUCopy );
 	}
 };

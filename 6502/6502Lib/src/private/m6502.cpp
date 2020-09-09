@@ -11,12 +11,159 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		LoadRegisterSetStatus( Register );
 	};
 
+	/** And the A Register with the value from the memory address */
+	auto And =
+		[&Cycles, &memory, this]
+	( Word Address )
+	{
+		A &= ReadByte( Cycles, Address, memory );
+		LoadRegisterSetStatus( A );
+	};
+
+	/** Or the A Register with the value from the memory address */
+	auto Ora =
+		[&Cycles, &memory, this]
+	( Word Address )
+	{
+		A |= ReadByte( Cycles, Address, memory );
+		LoadRegisterSetStatus( A );
+	};
+
+	/** Eor the A Register with the value from the memory address */
+	auto Eor =
+		[&Cycles, &memory, this]
+	( Word Address )
+	{
+		A ^= ReadByte( Cycles, Address, memory );
+		LoadRegisterSetStatus( A );
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
 		Byte Ins = FetchByte( Cycles, memory );
 		switch ( Ins )
 		{
+		case INS_AND_IM:
+		{
+			A &= FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( A );
+		} break;		
+		case INS_ORA_IM:
+		{
+			A |= FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_EOR_IM:
+		{
+			A ^= FetchByte( Cycles, memory );
+			LoadRegisterSetStatus( A );
+		} break;
+		case INS_AND_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			Eor( Address );
+		} break;
+		case INS_AND_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
+			And( Address );
+		} break;
+		case INS_ORA_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
+			Ora( Address );
+		} break;
+		case INS_EOR_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
+			Eor( Address );
+		} break;
 		case INS_LDA_IM:
 		{
 			A = FetchByte( Cycles, memory );
