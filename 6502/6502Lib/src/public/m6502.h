@@ -261,7 +261,11 @@ struct m6502::CPU
 		INS_EOR_ABSX = 0x5D,
 		INS_EOR_ABSY = 0x59,
 		INS_EOR_INDX = 0x41,
-		INS_EOR_INDY = 0x51
+		INS_EOR_INDY = 0x51,
+
+		//BIT
+		INS_BIT_ZP = 0x24,
+		INS_BIT_ABS = 0x2C
 		;
 
 	/** Sets the correct Process status after a load register instruction
