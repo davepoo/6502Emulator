@@ -170,14 +170,16 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrZeroPage( Cycles, memory );
 			Byte Value = ReadByte( Cycles, Address, memory );
 			Flag.Z = !(A & Value);
-			PS |= (Value & 0b11000000);
+			Flag.N = (Value & NegativeFlagBit) != 0;
+			Flag.V = (Value & OverflowFlagBit) != 0;
 		} break;
 		case INS_BIT_ABS:
 		{
 			Word Address = AddrAbsolute( Cycles, memory );
 			Byte Value = ReadByte( Cycles, Address, memory );
 			Flag.Z = !(A & Value);
-			PS |= (Value & 0b11000000);
+			Flag.N = (Value & NegativeFlagBit) != 0;
+			Flag.V = (Value & OverflowFlagBit) != 0;
 		} break;
 		case INS_LDA_IM:
 		{

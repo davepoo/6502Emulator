@@ -180,6 +180,11 @@ struct m6502::CPU
 		return ValueFromStack;
 	}
 
+	// Process status bits
+	static constexpr Byte
+		NegativeFlagBit = 0b10000000,
+		OverflowFlagBit = 0b01000000;
+
 	// opcodes
 	static constexpr Byte
 		//LDA
@@ -274,7 +279,7 @@ struct m6502::CPU
 	void LoadRegisterSetStatus( Byte Register )
 	{
 		Flag.Z = (Register == 0);
-		Flag.N = (Register & 0b10000000) > 0;
+		Flag.N = (Register & NegativeFlagBit) > 0;
 	}
 
 	/** @return the number of cycles that were used */

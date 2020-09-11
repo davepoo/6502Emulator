@@ -703,6 +703,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPage )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0xCC;
 	mem[0xFFFC] = CPU::INS_BIT_ZP;	
 	mem[0xFFFD] = 0x42;
@@ -725,6 +726,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZero )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = true;
 	cpu.A = 0xCC;
 	mem[0xFFFC] = CPU::INS_BIT_ZP;
 	mem[0xFFFD] = 0x42;
@@ -747,6 +749,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZeroBits6And7Zero )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0x33;
 	mem[0xFFFC] = CPU::INS_BIT_ZP;
 	mem[0xFFFD] = 0x42;
@@ -769,6 +772,8 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZeroBits6And7Mixed )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = false;
+	cpu.Flag.N = true;
 	mem[0xFFFC] = CPU::INS_BIT_ZP;
 	mem[0xFFFD] = 0x42;
 	mem[0x0042] = 0b01000000;
@@ -786,6 +791,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsolute )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0xCC;
 	mem[0xFFFC] = CPU::INS_BIT_ABS;
 	mem[0xFFFD] = 0x00;
@@ -809,6 +815,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZero )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = true;
 	cpu.A = 0xCC;
 	mem[0xFFFC] = CPU::INS_BIT_ABS;
 	mem[0xFFFD] = 0x00;
@@ -832,6 +839,7 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZeroBit6And7Zero )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0x33;
 	mem[0xFFFC] = CPU::INS_BIT_ABS;
 	mem[0xFFFD] = 0x00;
@@ -855,6 +863,8 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZeroBit6And7Mixed )
 {
 	// given:
 	using namespace m6502;
+	cpu.Flag.V = true;
+	cpu.Flag.N = false;
 	mem[0xFFFC] = CPU::INS_BIT_ABS;
 	mem[0xFFFD] = 0x00;
 	mem[0xFFFE] = 0x80;
