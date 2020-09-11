@@ -282,6 +282,12 @@ struct m6502::CPU
 		Flag.N = (Register & NegativeFlagBit) > 0;
 	}
 
+	/** @return the address that the program was loading into, or 0 if no program */
+	Word LoadPrg( const Byte* Program, u32 NumBytes, Mem& memory ) const;
+
+	/** printf the registers, program counter etc */
+	void PrintStatus() const;
+
 	/** @return the number of cycles that were used */
 	s32 Execute( s32 Cycles, Mem& memory );
 
