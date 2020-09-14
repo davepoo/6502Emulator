@@ -270,7 +270,13 @@ struct m6502::CPU
 
 		//BIT
 		INS_BIT_ZP = 0x24,
-		INS_BIT_ABS = 0x2C
+		INS_BIT_ABS = 0x2C,
+
+		//Transfer Registers
+		INS_TAX = 0xAA,
+		INS_TAY = 0xA8,
+		INS_TXA = 0x8A,
+		INS_TYA = 0x98
 		;
 
 	/** Sets the correct Process status after a load register instruction
