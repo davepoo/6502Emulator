@@ -276,13 +276,27 @@ struct m6502::CPU
 		INS_TAX = 0xAA,
 		INS_TAY = 0xA8,
 		INS_TXA = 0x8A,
-		INS_TYA = 0x98
+		INS_TYA = 0x98,
+
+		//Increments, Decrements
+		INS_INX = 0xE8,
+		INS_INY = 0xC8,
+		INS_DEY = 0x88,
+		INS_DEX = 0xCA,
+		INS_DEC_ZP = 0xC6,
+		INS_DEC_ZPX = 0xD6,
+		INS_DEC_ABS = 0xCE,
+		INS_DEC_ABSX = 0xDE,
+		INS_INC_ZP = 0xE6,
+		INS_INC_ZPX = 0xF6,
+		INS_INC_ABS = 0xEE,
+		INS_INC_ABSX = 0xFE
 		;
 
 	/** Sets the correct Process status after a load register instruction
 	*	- LDA, LDX, LDY
 	*	@Register The A,X or Y Register */
-	void LoadRegisterSetStatus( Byte Register )
+	void SetZeroAndNegativeFlags( Byte Register )
 	{
 		Flag.Z = (Register == 0);
 		Flag.N = (Register & NegativeFlagBit) > 0;
