@@ -6,6 +6,7 @@
 
 namespace m6502
 {
+	using SByte = char;
 	using Byte = unsigned char;
 	using Word = unsigned short;
 
@@ -290,7 +291,9 @@ struct m6502::CPU
 		INS_INC_ZP = 0xE6,
 		INS_INC_ZPX = 0xF6,
 		INS_INC_ABS = 0xEE,
-		INS_INC_ABSX = 0xFE
+		INS_INC_ABSX = 0xFE,
+
+		INS_BEQ = 0xF0
 		;
 
 	/** Sets the correct Process status after a load register instruction
