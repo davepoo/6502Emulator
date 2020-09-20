@@ -38,6 +38,25 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		SetZeroAndNegativeFlags( A );
 	};
 
+	/* Conditional branch */
+	auto BranchIf = [&Cycles, &memory, this]
+		( bool Test, bool Expected )
+	{
+		SByte Offset = FetchSByte( Cycles, memory );
+		if ( Test == Expected )
+		{
+			const Word PCOld = PC;
+			PC += Offset;
+			Cycles--;
+
+			const bool PageChanged = (PC >> 8) != (PCOld >> 8);
+			if ( PageChanged )
+			{
+				Cycles -= 2;
+			}
+		}
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
@@ -513,19 +532,35 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_BEQ:
 		{
-			Byte Offset = FetchByte( Cycles, memory );
-			if ( Flag.Z )
-			{
-				const Word PCOld = PC;
-				PC += static_cast<SByte>( Offset );
-				Cycles--;
-
-				const bool PageChanged = (PC >> 8) != (PCOld >> 8);
-				if ( PageChanged )
-				{
-					Cycles -= 2;
-				}
-			}
+			BranchIf( Flag.Z, true );
+		} break;
+		case INS_BNE:
+		{
+			BranchIf( Flag.Z, false );
+		} break;
+		case INS_BCS:
+		{
+			BranchIf( Flag.C, true );
+		} break;
+		case INS_BCC:
+		{
+			BranchIf( Flag.C, false );
+		} break;
+		case INS_BMI:
+		{
+			BranchIf( Flag.N, true );
+		} break;
+		case INS_BPL:
+		{
+			BranchIf( Flag.N, false );
+		} break;
+		case INS_BVC:
+		{
+			BranchIf( Flag.V, false );
+		} break;
+		case INS_BVS:
+		{
+			BranchIf( Flag.V, true );
 		} break;
 		default:
 		{

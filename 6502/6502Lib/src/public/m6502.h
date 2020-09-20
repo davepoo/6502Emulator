@@ -93,6 +93,11 @@ struct m6502::CPU
 		return Data;
 	}
 
+	SByte FetchSByte( s32& Cycles, const Mem& memory )
+	{
+		return FetchByte( Cycles, memory );
+	}
+
 	Word FetchWord( s32& Cycles, const Mem& memory )
 	{
 		// 6502 is little endian
@@ -293,7 +298,14 @@ struct m6502::CPU
 		INS_INC_ABS = 0xEE,
 		INS_INC_ABSX = 0xFE,
 
-		INS_BEQ = 0xF0
+		INS_BEQ = 0xF0,
+		INS_BNE = 0xD0,
+		INS_BCS = 0xB0,
+		INS_BCC = 0x90,
+		INS_BMI = 0x30,
+		INS_BPL = 0x10,
+		INS_BVC = 0x50,
+		INS_BVS = 0x70
 		;
 
 	/** Sets the correct Process status after a load register instruction

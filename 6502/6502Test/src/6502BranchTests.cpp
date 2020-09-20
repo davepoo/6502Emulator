@@ -124,5 +124,143 @@ TEST_F( M6502BranchTests, BEQCanBranchBackwardsWhenZeroIsSetFromAssembleCode )
 	EXPECT_EQ( cpu.PS, CPUCopy.PS );
 }
 
+TEST_F( M6502BranchTests, BNECanBranchForwardsWhenZeroIsNotSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.Z = false;
+	mem[0xFF00] = CPU::INS_BNE;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
 
 
+TEST_F( M6502BranchTests, BCSCanBranchForwardsWhenCarryFlagIsSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.C = true;
+	mem[0xFF00] = CPU::INS_BCS;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
+
+TEST_F( M6502BranchTests, BCCCanBranchForwardsWhenCarryFlagIsNotSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.C = false;
+	mem[0xFF00] = CPU::INS_BCC;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
+
+TEST_F( M6502BranchTests, BMICanBranchForwardsWhenNegativeFlagIsSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.N = true;
+	mem[0xFF00] = CPU::INS_BMI;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
+
+TEST_F( M6502BranchTests, BPLCanBranchForwardsWhenCarryNegativeIsNotSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.N = false;
+	mem[0xFF00] = CPU::INS_BPL;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
+
+TEST_F( M6502BranchTests, BVSCanBranchForwardsWhenOverflowFlagIsSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.V = true;
+	mem[0xFF00] = CPU::INS_BVS;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
+
+TEST_F( M6502BranchTests, BVCCanBranchForwardsWhenOverflowNegativeIsNotSet )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.Flag.V = false;
+	mem[0xFF00] = CPU::INS_BVC;
+	mem[0xFF01] = 0x1;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PC, 0xFF03 );
+	EXPECT_EQ( cpu.PS, CPUCopy.PS );
+}
