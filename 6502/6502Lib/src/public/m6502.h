@@ -317,6 +317,9 @@ struct m6502::CPU
 		INS_SEI = 0x78,
 		INS_CLV = 0xB8,
 
+		//Arithmetic
+		INS_ADC_ABS = 0x6D,
+
 		//misc
 		INS_NOP = 0xEA
 		;

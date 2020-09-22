@@ -601,6 +601,24 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		{
 			Cycles--;
 		} break;
+		case INS_ADC_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			const Byte AOld = A;
+			Word Sum = A;
+			Sum += Operand;
+			Sum += Flag.C;
+			A = (Sum & 0xFF);
+			Flag.Z = (A == 0);
+			Flag.N = (A & NegativeFlagBit) > 0;
+			Flag.C = (Sum & 0xFF00) > 0;
+			Flag.V = false;
+			if ( ((AOld & NegativeFlagBit) ^ (Operand & NegativeFlagBit)) == 0 )
+			{
+				Flag.V = (A & NegativeFlagBit) != (AOld & NegativeFlagBit);			
+			}
+		} break;
 		default:
 		{
 			printf( "Instruction %d not handled\n", Ins );

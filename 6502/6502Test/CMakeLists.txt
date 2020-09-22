@@ -49,7 +49,8 @@ set  (M6502_SOURCES
 		"src/6502TransferRegisterTests.cpp"
 		"src/6502IncrementDecrementTests.cpp"
 		"src/6502BranchTests.cpp"
-		"src/6502StatusFlagChangeTests.cpp")
+		"src/6502StatusFlagChangeTests.cpp"
+		"src/6502AddWithCarryTests.cpp")
 		
 source_group("src" FILES ${M6502_SOURCES})
 		
