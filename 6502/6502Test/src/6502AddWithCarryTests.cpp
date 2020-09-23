@@ -202,7 +202,7 @@ TEST_F( M6502AddWithCarryTests, ADCWillSetTheOverflowFlagWhenSignedPositiveAddti
 	// A: 01111111 127   
 	// O: 00000001 1
 	// =: 10000000 128
-	// C:0 N:0 V:1 Z:0
+	// C:0 N:1 V:1 Z:0
 	ADCTestData Test;
 	Test.Carry = false;
 	Test.A = 127;
