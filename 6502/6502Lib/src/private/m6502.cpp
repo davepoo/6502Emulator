@@ -1,5 +1,7 @@
 #include "m6502.h"
 
+#define ASSERT( Condition, Text ) { if ( !Condition ) { throw -1; } }
+
 m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 {
 	/** Load a Register with the value from the memory address */
@@ -55,6 +57,23 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 				Cycles -= 2;
 			}
 		}
+	};
+
+	/** Do add with carry given the the operand */
+	auto ADC = [&Cycles, &memory, this]
+	( Byte Operand )
+	{
+		ASSERT( Flag.D == false, "haven't handled decimal mode!" );
+		const bool AreSignBitsTheSame =
+			!((A ^ Operand) & NegativeFlagBit);
+		Word Sum = A;
+		Sum += Operand;
+		Sum += Flag.C;
+		A = (Sum & 0xFF);
+		SetZeroAndNegativeFlags( A );
+		Flag.C = Sum > 0xFF;
+		Flag.V = AreSignBitsTheSame &&
+			((A ^ Operand) & NegativeFlagBit);
 	};
 
 	const s32 CyclesRequested = Cycles;
@@ -605,19 +624,48 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		{
 			Word Address = AddrAbsolute( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
-			const Byte AOld = A;
-			Word Sum = A;
-			Sum += Operand;
-			Sum += Flag.C;
-			A = (Sum & 0xFF);
-			Flag.Z = (A == 0);
-			Flag.N = (A & NegativeFlagBit) > 0;
-			Flag.C = (Sum & 0xFF00) > 0;
-			Flag.V = false;
-			if ( ((AOld & NegativeFlagBit) ^ (Operand & NegativeFlagBit)) == 0 )
-			{
-				Flag.V = (A & NegativeFlagBit) != (AOld & NegativeFlagBit);			
-			}
+			ADC( Operand );
+		} break;
+		case INS_ADC_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			ADC( Operand );
+		} break;
+		case INS_ADC:
+		{
+			Byte Operand = FetchByte( Cycles, memory );
+			ADC( Operand );
 		} break;
 		default:
 		{
