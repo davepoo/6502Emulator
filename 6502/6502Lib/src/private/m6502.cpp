@@ -76,6 +76,16 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			((A ^ Operand) & NegativeFlagBit);
 	};
 
+	/** Sets the processor status for a CMP/CPX/CPY instruction */
+	auto CMP = [&Cycles, &memory, this]
+	( Byte Operand )
+	{
+		Byte Temp = A - Operand;
+		Flag.N = (Temp & NegativeFlagBit) > 0;
+		Flag.Z = A == Operand;
+		Flag.C = A >= Operand;
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
@@ -670,10 +680,49 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		case INS_CMP:
 		{
 			Byte Operand = FetchByte( Cycles, memory );
-			Byte Temp = A - Operand;
-			Flag.N = (Temp & NegativeFlagBit) > 0;
-			Flag.Z = A == Operand;
-			Flag.C = A >= Operand;
+			CMP( Operand );
+		} break;
+		case INS_CMP_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
+		} break;
+		case INS_CMP_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			CMP( Operand );
 		} break;
 		default:
 		{

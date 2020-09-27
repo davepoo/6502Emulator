@@ -329,6 +329,13 @@ struct m6502::CPU
 
 		// Register Comparison
 		INS_CMP = 0xC9,
+		INS_CMP_ZP = 0xC5,
+		INS_CMP_ZPX = 0xD5,
+		INS_CMP_ABS = 0xCD,
+		INS_CMP_ABSX = 0xDD,
+		INS_CMP_ABSY = 0xD9,
+		INS_CMP_INDX = 0xC1,
+		INS_CMP_INDY = 0xD1,
 
 		//misc
 		INS_NOP = 0xEA
