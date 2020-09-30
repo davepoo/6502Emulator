@@ -337,6 +337,13 @@ struct m6502::CPU
 		INS_CMP_INDX = 0xC1,
 		INS_CMP_INDY = 0xD1,
 
+		INS_CPX = 0xE0,
+		INS_CPY = 0xC0,
+		INS_CPX_ZP = 0xE4,
+		INS_CPY_ZP = 0xC4,
+		INS_CPX_ABS = 0xEC,
+		INS_CPY_ABS = 0xCC,
+
 		//misc
 		INS_NOP = 0xEA
 		;
