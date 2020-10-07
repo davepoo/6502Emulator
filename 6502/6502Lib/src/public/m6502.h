@@ -327,6 +327,8 @@ struct m6502::CPU
 		INS_ADC_INDX = 0x61,
 		INS_ADC_INDY = 0x71,
 
+		INS_SBC_ABS = 0xED,
+
 		// Register Comparison
 		INS_CMP = 0xC9,
 		INS_CMP_ZP = 0xC5,

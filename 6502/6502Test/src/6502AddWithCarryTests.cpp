@@ -36,7 +36,18 @@ public:
 		bool ExpectV;
 	};
 
-	void TestADCAbsolute( ADCTestData Test )
+	enum class EOperation
+	{
+		Add, Subtract
+	};
+
+	void TestSBCAbsolute( ADCTestData Test )
+	{		
+		TestADCAbsolute( Test, EOperation::Subtract );
+	}
+
+	void TestADCAbsolute( ADCTestData Test, 
+		EOperation Operation = EOperation::Add )
 	{
 		// given:
 		using namespace m6502;
@@ -46,7 +57,9 @@ public:
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
 		cpu.Flag.V = !Test.ExpectV;
-		mem[0xFF00] = CPU::INS_ADC_ABS;
+		mem[0xFF00] = 
+			(Operation == EOperation::Add) ? 
+			CPU::INS_ADC_ABS : CPU::INS_SBC_ABS;
 		mem[0xFF01] = 0x00;
 		mem[0xFF02] = 0x80;
 		mem[0x8000] = Test.Operand;
@@ -657,4 +670,116 @@ TEST_F( M6502AddWithCarryTests, ADCIndYCanAddAPositiveAndNegativeNumber )
 	Test.ExpectV = false;
 	Test.ExpectZ = false;
 	TestADCIndirectY( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractZeroFromZeroAndGetZero )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = 0;
+	Test.Operand = 0;
+	Test.Answer = 0;
+	Test.ExpectC = true;
+	Test.ExpectN = false;
+	Test.ExpectV = false;
+	Test.ExpectZ = true;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractZeroFromZeroAndCarryAndGetMinusOne )
+{
+	ADCTestData Test;
+	Test.Carry = false;
+	Test.A = 0;
+	Test.Operand = 0;
+	Test.Answer = BYTE(-1);
+	Test.ExpectC = false;
+	Test.ExpectN = true;
+	Test.ExpectV = false;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractOneFromZeroAndGetMinusOne )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = 0;
+	Test.Operand = 1;
+	Test.Answer = BYTE(-1);
+	Test.ExpectC = false;
+	Test.ExpectN = true;
+	Test.ExpectV = false;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractOneFromZeroWithCarryAndGetMinusTwo )
+{
+	ADCTestData Test;
+	Test.Carry = false;
+	Test.A = 0;
+	Test.Operand = 1;
+	Test.Answer = BYTE( -2 );
+	Test.ExpectC = false;
+	Test.ExpectN = true;
+	Test.ExpectV = false;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractTwoNegativeNumbersAndGetSignedOverflow )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = BYTE(-128);
+	Test.Operand = 1;
+	Test.Answer = 127;
+	Test.ExpectC = true;
+	Test.ExpectN = false;
+	Test.ExpectV = true;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractAPostitiveAndNegativeNumbersAndGetSignedOverflow )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = 127;
+	Test.Operand = BYTE(-1);
+	Test.Answer = 128;
+	Test.ExpectC = false;
+	Test.ExpectN = true;
+	Test.ExpectV = true;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractTwoUnsignedNumbers )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = 20;
+	Test.Operand = 17;
+	Test.Answer = 3;
+	Test.ExpectC = true;
+	Test.ExpectN = false;
+	Test.ExpectV = false;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
+}
+
+TEST_F( M6502AddWithCarryTests, SBCAbsCanSubtractTwoNegativeNumbers )
+{
+	ADCTestData Test;
+	Test.Carry = true;
+	Test.A = BYTE(-20);
+	Test.Operand = BYTE(-17);
+	Test.Answer = BYTE(-3);
+	Test.ExpectC = false;
+	Test.ExpectN = true;
+	Test.ExpectV = false;
+	Test.ExpectZ = false;
+	TestSBCAbsolute( Test );
 }
