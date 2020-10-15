@@ -92,10 +92,22 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		Flag.C = RegisterValue >= Operand;
 	};
 
+	/** Arithmetic shift left */
 	auto ASL = [&Cycles, this]( Byte Operand ) -> Byte
 	{
 		Flag.C = (Operand & NegativeFlagBit) > 0;
 		Byte Result = Operand << 1;
+		SetZeroAndNegativeFlags( Result );
+		Cycles--;
+		return Result;
+	};
+
+	/** Logical shift right */
+	auto LSR = [&Cycles, this]( Byte Operand ) -> Byte
+	{
+		constexpr Byte BitZero = 0b00000001;
+		Flag.C = (Operand & BitZero) > 0;
+		Byte Result = Operand >> 1;
 		SetZeroAndNegativeFlags( Result );
 		Cycles--;
 		return Result;
@@ -809,6 +821,38 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrAbsoluteX_5( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			Byte Result = ASL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_LSR:
+		{
+			A = LSR( A );
+		} break;
+		case INS_LSR_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = LSR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_LSR_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = LSR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_LSR_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = LSR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_LSR_ABSX:
+		{
+			Word Address = AddrAbsoluteX_5( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = LSR( Operand );
 			WriteByte( Result, Cycles, Address, memory );
 		} break;
 		default:
