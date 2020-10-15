@@ -346,6 +346,13 @@ struct m6502::CPU
 		INS_CPX_ABS = 0xEC,
 		INS_CPY_ABS = 0xCC,
 
+		// shifts
+		INS_ASL = 0x0A,
+		INS_ASL_ZP = 0x06,
+		INS_ASL_ZPX = 0x16,
+		INS_ASL_ABS = 0x0E,
+		INS_ASL_ABSX = 0x1E,
+
 		//misc
 		INS_NOP = 0xEA
 		;

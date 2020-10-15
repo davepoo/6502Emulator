@@ -92,6 +92,15 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		Flag.C = RegisterValue >= Operand;
 	};
 
+	auto ASL = [&Cycles, this]( Byte Operand ) -> Byte
+	{
+		Flag.C = (Operand & NegativeFlagBit) > 0;
+		Byte Result = Operand << 1;
+		SetZeroAndNegativeFlags( Result );
+		Cycles--;
+		return Result;
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
@@ -769,6 +778,38 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrIndirectY( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			RegisterCompare( Operand, A );
+		} break;
+		case INS_ASL:
+		{
+			A = ASL( A );
+		} break;
+		case INS_ASL_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ASL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ASL_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ASL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ASL_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ASL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ASL_ABSX:
+		{
+			Word Address = AddrAbsoluteX_5( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ASL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
 		} break;
 		default:
 		{
