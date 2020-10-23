@@ -113,6 +113,18 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		return Result;
 	};
 
+	/** Rotate left */
+	auto ROL = [&Cycles, this]( Byte Operand ) -> Byte
+	{
+		Byte NewBit1 = Flag.C ? 0b0000001 : 0;
+		Flag.C = (Operand & NegativeFlagBit) > 0;
+		Operand = Operand << 1;
+		Operand |= NewBit1;
+		SetZeroAndNegativeFlags( Operand );
+		Cycles--;
+		return Operand;
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
@@ -853,6 +865,38 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrAbsoluteX_5( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			Byte Result = LSR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROL:
+		{
+			A = ROL( A );
+		} break;
+		case INS_ROL_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROL_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROL_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROL_ABSX:
+		{
+			Word Address = AddrAbsoluteX_5( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROL( Operand );
 			WriteByte( Result, Cycles, Address, memory );
 		} break;
 		default:
