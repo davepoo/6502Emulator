@@ -189,7 +189,8 @@ struct m6502::CPU
 	// Process status bits
 	static constexpr Byte
 		NegativeFlagBit = 0b10000000,
-		OverflowFlagBit = 0b01000000;
+		OverflowFlagBit = 0b01000000,
+		ZeroBit = 0b00000001;
 
 	// opcodes
 	static constexpr Byte
@@ -364,6 +365,12 @@ struct m6502::CPU
 		INS_ROL_ZPX = 0x36,
 		INS_ROL_ABS = 0x2E,
 		INS_ROL_ABSX = 0x3E,
+
+		INS_ROR = 0x6A,
+		INS_ROR_ZP = 0x66,
+		INS_ROR_ZPX = 0x76,
+		INS_ROR_ABS = 0x6E,
+		INS_ROR_ABSX = 0x7E,
 
 		//misc
 		INS_NOP = 0xEA

@@ -105,8 +105,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 	/** Logical shift right */
 	auto LSR = [&Cycles, this]( Byte Operand ) -> Byte
 	{
-		constexpr Byte BitZero = 0b00000001;
-		Flag.C = (Operand & BitZero) > 0;
+		Flag.C = (Operand & ZeroBit) > 0;
 		Byte Result = Operand >> 1;
 		SetZeroAndNegativeFlags( Result );
 		Cycles--;
@@ -116,12 +115,27 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 	/** Rotate left */
 	auto ROL = [&Cycles, this]( Byte Operand ) -> Byte
 	{
-		Byte NewBit1 = Flag.C ? 0b0000001 : 0;
+		Byte NewBit0 = Flag.C ? ZeroBit : 0;
 		Flag.C = (Operand & NegativeFlagBit) > 0;
 		Operand = Operand << 1;
-		Operand |= NewBit1;
+		Operand |= NewBit0;
 		SetZeroAndNegativeFlags( Operand );
 		Cycles--;
+		return Operand;
+	};
+
+	/** Rotate right */
+	auto ROR = [&Cycles, this]( Byte Operand ) -> Byte
+	{
+		bool OldBit0 = (Operand & ZeroBit) > 0;
+		Operand = Operand >> 1;
+		if ( Flag.C )
+		{
+			Operand |= NegativeFlagBit;
+		}
+		Cycles--;
+		Flag.C = OldBit0;
+		SetZeroAndNegativeFlags( Operand );
 		return Operand;
 	};
 
@@ -897,6 +911,38 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrAbsoluteX_5( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			Byte Result = ROL( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROR:
+		{
+			A = ROR( A );
+		} break;
+		case INS_ROR_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );			
+			Byte Result = ROR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROR_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROR_ABS:
+		{
+			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROR( Operand );
+			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_ROR_ABSX:
+		{
+			Word Address = AddrAbsoluteX_5( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			Byte Result = ROR( Operand );
 			WriteByte( Result, Cycles, Address, memory );
 		} break;
 		default:
