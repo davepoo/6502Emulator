@@ -435,7 +435,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		case INS_JSR:
 		{
 			Word SubAddr = FetchWord( Cycles, memory );
-			PushPCToStack( Cycles, memory );	
+			PushPCMinusOneToStack( Cycles, memory );	
 			PC = SubAddr;
 			Cycles--;
 		} break;
@@ -483,6 +483,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		{
 			A = PopByteFromStack( Cycles, memory );
 			SetZeroAndNegativeFlags( A );
+			Cycles--;
 		} break;
 		case INS_PHP:
 		{
@@ -491,6 +492,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		case INS_PLP:
 		{
 			PS = PopByteFromStack( Cycles, memory );
+			Cycles--;
 		} break;
 		case INS_TAX:
 		{
@@ -944,6 +946,19 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			Byte Result = ROR( Operand );
 			WriteByte( Result, Cycles, Address, memory );
+		} break;
+		case INS_BRK:
+		{
+			PushPCToStack( Cycles, memory );
+			PushByteOntoStack( Cycles, PS, memory );
+			constexpr Word InterruptVector = 0xFFFE;
+			PC = ReadWord( Cycles, InterruptVector, memory );
+			Flag.B = true;
+		} break;
+		case INS_RTI:
+		{
+			PS = PopByteFromStack( Cycles, memory );
+			PC = PopWordFromStack( Cycles, memory );
 		} break;
 		default:
 		{

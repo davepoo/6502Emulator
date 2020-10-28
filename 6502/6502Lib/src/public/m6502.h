@@ -152,11 +152,24 @@ struct m6502::CPU
 		return 0x100 | SP;
 	}
 
+	void PushWordToStack( s32& Cycles, Mem& memory, Word Value )
+	{
+		WriteByte( Value >> 8, Cycles, SPToAddress(), memory );
+		SP--;
+		WriteByte( Value & 0xFF, Cycles, SPToAddress(), memory );
+		SP--;
+	}
+
 	/** Push the PC-1 onto the stack */
+	void PushPCMinusOneToStack( s32& Cycles, Mem& memory )
+	{
+		PushWordToStack( Cycles, memory, PC - 1 );
+	}
+
+	/** Push the PC onto the stack */
 	void PushPCToStack( s32& Cycles, Mem& memory )
 	{
-		WriteWord( PC - 1, Cycles, SPToAddress()-1, memory );
-		SP -= 2;
+		PushWordToStack( Cycles, memory, PC );
 	}
 
 	void PushByteOntoStack( s32& Cycles, Byte Value, Mem& memory )
@@ -171,9 +184,10 @@ struct m6502::CPU
 	Byte PopByteFromStack( s32& Cycles, Mem& memory )
 	{
 		SP++;
+		Cycles--;
 		const Word SPWord = SPToAddress();
 		Byte Value = memory[SPWord];
-		Cycles -= 3;
+		Cycles--;
 		return Value;
 	}
 
@@ -373,7 +387,9 @@ struct m6502::CPU
 		INS_ROR_ABSX = 0x7E,
 
 		//misc
-		INS_NOP = 0xEA
+		INS_NOP = 0xEA,
+		INS_BRK = 0x00,
+		INS_RTI = 0x40
 		;
 
 	/** Sets the correct Process status after a load register instruction
