@@ -139,6 +139,29 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		return Operand;
 	};
 
+	/** Push Processor status onto the stack
+	*	Setting bits 4 & 5 on the stack */
+	auto PushPSToStack = [&Cycles, &memory, this]( bool SetIntDisableFlagAfter )
+	{
+		Byte PSStack = PS | BreakFlagBit | UnusedFlagBit;		
+		PushByteOntoStack( Cycles, PSStack, memory );
+
+		if ( SetIntDisableFlagAfter )
+		{
+			Flag.I = true;
+		}
+	};
+
+	/** Pop Processor status from the stack
+	*	Ignoring bits 4 & 5 on the stack */
+	auto PopPSFromStack = [&Cycles, &memory, this]()
+	{
+		Byte PSFromStack = PopByteFromStack( Cycles, memory );
+		PSFromStack &= ~(UnusedFlagBit | BreakFlagBit);
+		PS &= (UnusedFlagBit | BreakFlagBit);
+		PS |= PSFromStack;
+	};
+
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
@@ -487,11 +510,12 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_PHP:
 		{
-			PushByteOntoStack( Cycles, PS, memory );
+			constexpr bool SetIntDisableFlagAfter = false;
+			PushPSToStack( SetIntDisableFlagAfter );
 		} break;	
 		case INS_PLP:
 		{
-			PS = PopByteFromStack( Cycles, memory );
+			PopPSFromStack();
 			Cycles--;
 		} break;
 		case INS_TAX:
@@ -950,14 +974,15 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		case INS_BRK:
 		{
 			PushPCToStack( Cycles, memory );
-			PushByteOntoStack( Cycles, PS, memory );
+			constexpr bool SetIntDisableFlagAfter = true;
+			PushPSToStack( SetIntDisableFlagAfter );
 			constexpr Word InterruptVector = 0xFFFE;
 			PC = ReadWord( Cycles, InterruptVector, memory );
 			Flag.B = true;
 		} break;
 		case INS_RTI:
 		{
-			PS = PopByteFromStack( Cycles, memory );
+			PopPSFromStack();
 			PC = PopWordFromStack( Cycles, memory );
 		} break;
 		default:

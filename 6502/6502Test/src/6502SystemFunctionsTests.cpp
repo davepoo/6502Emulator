@@ -129,7 +129,15 @@ TEST_F( M6502SystemFunctionsTests, BRKWillPushPCandPSOntoTheStack )
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
 	EXPECT_EQ( mem[(0x100 | OldSP)-0], 0xFF );
 	EXPECT_EQ( mem[(0x100 | OldSP)-1], 0x01 );
-	EXPECT_EQ( mem[(0x100 | OldSP)-2], CPUCopy.PS );
+	EXPECT_EQ( mem[(0x100 | OldSP)-2], 
+		CPUCopy.PS 
+		| CPU::UnusedFlagBit 
+		| CPU::BreakFlagBit );
+
+	// https://wiki.nesdev.com/w/index.php/Status_flags
+	// Instruction	|Bits 5 and 4	| Side effects after pushing 
+	// BRK			|	11			| I is set to 1 
+	EXPECT_EQ( cpu.Flag.I, true );
 }
 
 TEST_F( M6502SystemFunctionsTests, RTICanReturnFromAnInterruptLeavingTheCPUInTheStateWhenItEntered )
@@ -154,6 +162,14 @@ TEST_F( M6502SystemFunctionsTests, RTICanReturnFromAnInterruptLeavingTheCPUInThe
 	EXPECT_EQ( ActualCyclesRTI, EXPECTED_CYCLES_RTI );
 	EXPECT_EQ( CPUCopy.SP, cpu.SP );
 	EXPECT_EQ( 0xFF01, cpu.PC );
+
+	// TODO:
+	// http://www.obelisk.me.uk/6502/reference.html#BRK
+	// says that B Flag is set from Stack
+	// but https://wiki.nesdev.com/w/index.php/Status_flags
+	// says that B and Unused flag are ignored when setting from 
+	// stack. They can't both be true?
+	// "Two instructions (PLP and RTI) pull a byte from the stack and set all the flags. They ignore bits 5 and 4."
 	EXPECT_EQ( CPUCopy.PS, cpu.PS );
 }
 

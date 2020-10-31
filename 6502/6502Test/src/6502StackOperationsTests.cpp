@@ -209,9 +209,38 @@ TEST_F( M6502StackOperationsTests, PHPCanPushProcessorStatusOntoTheStack )
 
 	// then:
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
-	EXPECT_EQ( mem[cpu.SPToAddress() + 1], 0xCC );
+	EXPECT_EQ( mem[cpu.SPToAddress() + 1], 
+		0xCC | CPU::UnusedFlagBit | CPU::BreakFlagBit );
 	EXPECT_EQ( cpu.PS, CPUCopy.PS );
 	EXPECT_EQ( cpu.SP, 0xFE );
+}
+
+TEST_F( M6502StackOperationsTests, PHPAlwaysSetsBits4And5OnTheStack )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.PS = 0x0;
+	mem[0xFF00] = CPU::INS_PHP;
+	constexpr s32 EXPECTED_CYCLES = 3;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	Word AddPSOnStack = cpu.SPToAddress() + 1;
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+
+	// https://wiki.nesdev.com/w/index.php/Status_flags
+	//Two interrupts (/IRQ and /NMI) and two instructions (PHP and BRK) push 
+	// the flags to the stack. In the byte pushed, bit 5 is always set to 1, 
+	//and bit 4 is 1 if from an instruction (PHP or BRK) or 0 if from an 
+	// interrupt line being pulled low (/IRQ or /NMI). This is the only time 
+	// and place where the B flag actually exists: not in the status register 
+	// itself, but in bit 4 of the copy that is written to the stack. 
+	const Byte FlagsOnStack = CPU::UnusedFlagBit | CPU::BreakFlagBit;
+	EXPECT_EQ( mem[AddPSOnStack], FlagsOnStack );
 }
 
 TEST_F( M6502StackOperationsTests, PLPCanPullAValueFromTheStackIntoTheProcessorStatus )
@@ -221,7 +250,7 @@ TEST_F( M6502StackOperationsTests, PLPCanPullAValueFromTheStackIntoTheProcessorS
 	cpu.Reset( 0xFF00, mem );
 	cpu.SP = 0xFE;
 	cpu.PS = 0;
-	mem[0x01FF] = 0x42;
+	mem[0x01FF] = 0x42 | CPU::BreakFlagBit | CPU::UnusedFlagBit;
 	mem[0xFF00] = CPU::INS_PLP;
 	constexpr s32 EXPECTED_CYCLES = 4;
 	CPU CPUCopy = cpu;
@@ -232,4 +261,24 @@ TEST_F( M6502StackOperationsTests, PLPCanPullAValueFromTheStackIntoTheProcessorS
 	// then:
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
 	EXPECT_EQ( cpu.PS, 0x42 );
+}
+
+TEST_F( M6502StackOperationsTests, PLPIgnoresBits4And5WhenPullingFromTheStack )
+{
+	// given:
+	using namespace m6502;
+	cpu.Reset( 0xFF00, mem );
+	cpu.SP = 0xFE;
+	cpu.PS = CPU::BreakFlagBit | CPU::UnusedFlagBit;
+	mem[0x01FF] = CPU::BreakFlagBit | CPU::UnusedFlagBit;
+	mem[0xFF00] = CPU::INS_PLP;
+	constexpr s32 EXPECTED_CYCLES = 4;
+	CPU CPUCopy = cpu;
+
+	// when:
+	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+	// then:
+	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+	EXPECT_EQ( cpu.PS, CPU::BreakFlagBit | CPU::UnusedFlagBit );
 }

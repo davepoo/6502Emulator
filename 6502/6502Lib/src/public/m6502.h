@@ -48,14 +48,14 @@ struct m6502::Mem
 
 struct m6502::StatusFlags
 {	
-	Byte C : 1;	//status flag
-	Byte Z : 1;	//status flag
-	Byte I : 1;//status flag
-	Byte D : 1;//status flag
-	Byte B : 1;//status flag
-	Byte Unused : 1;
-	Byte V : 1;//status flag
-	Byte N : 1;//status flag
+	Byte C : 1;	//0: Carry Flag	
+	Byte Z : 1;	//1: Zero Flag
+	Byte I : 1; //2: Interrupt disable
+	Byte D : 1; //3: Decimal mode
+	Byte B : 1; //4: Break
+	Byte Unused : 1; //5: Unused
+	Byte V : 1; //6: Overflow
+	Byte N : 1; //7: Negative
 };
 
 struct m6502::CPU
@@ -204,6 +204,9 @@ struct m6502::CPU
 	static constexpr Byte
 		NegativeFlagBit = 0b10000000,
 		OverflowFlagBit = 0b01000000,
+		BreakFlagBit = 0b000010000,
+		UnusedFlagBit = 0b000100000,
+		InterruptDisableFlagBit = 0b000000100,
 		ZeroBit = 0b00000001;
 
 	// opcodes

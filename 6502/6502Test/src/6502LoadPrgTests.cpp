@@ -72,3 +72,27 @@ TEST_F( M6502LoadPrgTests, TestLoadProgramAProgramAndExecuteIt )
 		Clock -= cpu.Execute( 1, mem );
 	}
 }
+
+TEST_F( M6502LoadPrgTests, LoadThe6502TestPrg )
+{
+#if 0	//Test program that doesn't finish!
+	// given:
+	using namespace m6502;
+
+	// when:
+	FILE* fp;
+	fopen_s( &fp, 
+		"6502_functional_test.bin", "rb" );
+
+	fread( &mem[0x000A], 1, 65526, fp );
+	fclose( fp );
+
+	cpu.PC = 0x400;
+
+	//then:
+	while ( true )
+	{
+		cpu.Execute( 1, mem );
+	}
+#endif
+}
