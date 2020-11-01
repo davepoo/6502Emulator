@@ -128,7 +128,11 @@ TEST_F( M6502SystemFunctionsTests, BRKWillPushPCandPSOntoTheStack )
 	// then:
 	EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
 	EXPECT_EQ( mem[(0x100 | OldSP)-0], 0xFF );
-	EXPECT_EQ( mem[(0x100 | OldSP)-1], 0x01 );
+	// https://www.c64-wiki.com/wiki/BRK
+	// Note that since BRK increments the program counter by 
+	// 2 instead of 1, it is advisable to use a NOP after it 
+	// to avoid issues
+	EXPECT_EQ( mem[(0x100 | OldSP)-1], 0x02 );
 	EXPECT_EQ( mem[(0x100 | OldSP)-2], 
 		CPUCopy.PS 
 		| CPU::UnusedFlagBit 
@@ -161,15 +165,7 @@ TEST_F( M6502SystemFunctionsTests, RTICanReturnFromAnInterruptLeavingTheCPUInThe
 	EXPECT_EQ( ActualCyclesBRK, EXPECTED_CYCLES_BRK );
 	EXPECT_EQ( ActualCyclesRTI, EXPECTED_CYCLES_RTI );
 	EXPECT_EQ( CPUCopy.SP, cpu.SP );
-	EXPECT_EQ( 0xFF01, cpu.PC );
-
-	// TODO:
-	// http://www.obelisk.me.uk/6502/reference.html#BRK
-	// says that B Flag is set from Stack
-	// but https://wiki.nesdev.com/w/index.php/Status_flags
-	// says that B and Unused flag are ignored when setting from 
-	// stack. They can't both be true?
-	// "Two instructions (PLP and RTI) pull a byte from the stack and set all the flags. They ignore bits 5 and 4."
+	EXPECT_EQ( 0xFF02, cpu.PC );
 	EXPECT_EQ( CPUCopy.PS, cpu.PS );
 }
 

@@ -166,6 +166,12 @@ struct m6502::CPU
 		PushWordToStack( Cycles, memory, PC - 1 );
 	}
 
+	/** Push the PC+1 onto the stack */
+	void PushPCPlusOneToStack( s32& Cycles, Mem& memory )
+	{
+		PushWordToStack( Cycles, memory, PC + 1 );
+	}
+
 	/** Push the PC onto the stack */
 	void PushPCToStack( s32& Cycles, Mem& memory )
 	{
@@ -242,6 +248,7 @@ struct m6502::CPU
 		INS_STA_INDY = 0x91,
 		//STX
 		INS_STX_ZP = 0x86,
+		INS_STX_ZPY = 0x96,
 		INS_STX_ABS = 0x8E,
 		//STY
 		INS_STY_ZP = 0x84,

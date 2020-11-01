@@ -141,31 +141,33 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 
 	/** Push Processor status onto the stack
 	*	Setting bits 4 & 5 on the stack */
-	auto PushPSToStack = [&Cycles, &memory, this]( bool SetIntDisableFlagAfter )
+	auto PushPSToStack = [&Cycles, &memory, this]( )
 	{
 		Byte PSStack = PS | BreakFlagBit | UnusedFlagBit;		
 		PushByteOntoStack( Cycles, PSStack, memory );
-
-		if ( SetIntDisableFlagAfter )
-		{
-			Flag.I = true;
-		}
 	};
 
 	/** Pop Processor status from the stack
-	*	Ignoring bits 4 & 5 on the stack */
+	*	Clearing bits 4 & 5 (Break & Unused) */
 	auto PopPSFromStack = [&Cycles, &memory, this]()
 	{
-		Byte PSFromStack = PopByteFromStack( Cycles, memory );
-		PSFromStack &= ~(UnusedFlagBit | BreakFlagBit);
-		PS &= (UnusedFlagBit | BreakFlagBit);
-		PS |= PSFromStack;
+		PS = PopByteFromStack( Cycles, memory );
+		Flag.B = false;
+		Flag.Unused = false;
 	};
 
 	const s32 CyclesRequested = Cycles;
 	while ( Cycles > 0 )
 	{
 		Byte Ins = FetchByte( Cycles, memory );
+
+#if 0
+		if ( PC >= 0x35FE && PC <= 0xFFF0 )
+		{
+			printf( "" );
+		}
+#endif
+
 		switch ( Ins )
 		{
 		case INS_AND_IM:
@@ -415,6 +417,11 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Word Address = AddrZeroPage( Cycles, memory );
 			WriteByte( X, Cycles, Address, memory );
 		} break;
+		case INS_STX_ZPY:
+		{
+			Word Address = AddrZeroPageY( Cycles, memory );
+			WriteByte( X, Cycles, Address, memory );
+		} break;
 		case INS_STY_ZP:
 		{
 			Word Address = AddrZeroPage( Cycles, memory );
@@ -510,8 +517,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_PHP:
 		{
-			constexpr bool SetIntDisableFlagAfter = false;
-			PushPSToStack( SetIntDisableFlagAfter );
+			PushPSToStack();
 		} break;	
 		case INS_PLP:
 		{
@@ -973,12 +979,12 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 		} break;
 		case INS_BRK:
 		{
-			PushPCToStack( Cycles, memory );
-			constexpr bool SetIntDisableFlagAfter = true;
-			PushPSToStack( SetIntDisableFlagAfter );
+			PushPCPlusOneToStack( Cycles, memory );
+			PushPSToStack();
 			constexpr Word InterruptVector = 0xFFFE;
 			PC = ReadWord( Cycles, InterruptVector, memory );
 			Flag.B = true;
+			Flag.I = true;
 		} break;
 		case INS_RTI:
 		{

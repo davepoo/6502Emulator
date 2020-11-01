@@ -75,7 +75,7 @@ TEST_F( M6502LoadPrgTests, TestLoadProgramAProgramAndExecuteIt )
 
 TEST_F( M6502LoadPrgTests, LoadThe6502TestPrg )
 {
-#if 0	//Test program that doesn't finish!
+#if 0
 	// given:
 	using namespace m6502;
 

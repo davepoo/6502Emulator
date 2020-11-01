@@ -96,6 +96,29 @@ public:
 		EXPECT_EQ( mem[0x008F], 0x42 );
 		VerfifyUnmodifiedFlagsFromStoreRegister( cpu, CPUCopy );
 	}
+
+	void TestStoreRegisterZeroPageY(
+		m6502::Byte OpcodeToTest,
+		m6502::Byte m6502::CPU::*Register )
+	{
+		// given:
+		using namespace m6502;
+		cpu.*Register = 0x42;
+		cpu.Y = 0x0F;
+		mem[0xFFFC] = OpcodeToTest;
+		mem[0xFFFD] = 0x80;
+		mem[0x008F] = 0x00;
+		constexpr s32 EXPECTED_CYCLES = 4;
+		CPU CPUCopy = cpu;
+
+		// when:
+		const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
+
+		// then:
+		EXPECT_EQ( ActualCycles, EXPECTED_CYCLES );
+		EXPECT_EQ( mem[0x008F], 0x42 );
+		VerfifyUnmodifiedFlagsFromStoreRegister( cpu, CPUCopy );
+	}
 };
 
 TEST_F( M6502StoreRegisterTests, STAZeroPageCanStoreTheARegisterIntoMemory )
@@ -108,6 +131,12 @@ TEST_F( M6502StoreRegisterTests, STXZeroPageCanStoreTheXRegisterIntoMemory )
 {
 	using namespace m6502;
 	TestStoreRegisterZeroPage( CPU::INS_STX_ZP, &CPU::X );
+}
+
+TEST_F( M6502StoreRegisterTests, STXZeroPageYCanStoreTheXRegisterIntoMemory )
+{
+	using namespace m6502;
+	TestStoreRegisterZeroPageY( CPU::INS_STX_ZPY, &CPU::X );
 }
 
 TEST_F( M6502StoreRegisterTests, STYZeroPageCanStoreTheYRegisterIntoMemory )
