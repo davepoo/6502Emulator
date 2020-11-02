@@ -160,14 +160,6 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 	while ( Cycles > 0 )
 	{
 		Byte Ins = FetchByte( Cycles, memory );
-
-#if 0
-		if ( PC >= 0x35FE && PC <= 0xFFF0 )
-		{
-			printf( "" );
-		}
-#endif
-
 		switch ( Ins )
 		{
 		case INS_AND_IM:
@@ -762,9 +754,50 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Byte Operand = FetchByte( Cycles, memory );
 			ADC( Operand );
 		} break;
+		case INS_SBC:
+		{
+			Byte Operand = FetchByte( Cycles, memory );
+			SBC( Operand );
+		} break;
 		case INS_SBC_ABS:
 		{
 			Word Address = AddrAbsolute( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_ZP:
+		{
+			Word Address = AddrZeroPage( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_ZPX:
+		{
+			Word Address = AddrZeroPageX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_ABSX:
+		{
+			Word Address = AddrAbsoluteX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_ABSY:
+		{
+			Word Address = AddrAbsoluteY( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_INDX:
+		{
+			Word Address = AddrIndirectX( Cycles, memory );
+			Byte Operand = ReadByte( Cycles, Address, memory );
+			SBC( Operand );
+		} break;
+		case INS_SBC_INDY:
+		{
+			Word Address = AddrIndirectY( Cycles, memory );
 			Byte Operand = ReadByte( Cycles, Address, memory );
 			SBC( Operand );
 		} break;
