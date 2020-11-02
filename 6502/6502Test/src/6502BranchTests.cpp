@@ -65,7 +65,7 @@ TEST_F( M6502BranchTests, BEQCanBranchForwardsIntoANewPageWhenZeroIsSet )
 	cpu.Flag.Z = true;
 	mem[0xFEFD] = CPU::INS_BEQ;
 	mem[0xFEFE] = 0x1;
-	constexpr s32 EXPECTED_CYCLES = 5;
+	constexpr s32 EXPECTED_CYCLES = 4;
 	CPU CPUCopy = cpu;
 
 	// when:

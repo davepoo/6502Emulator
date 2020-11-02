@@ -54,7 +54,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			const bool PageChanged = (PC >> 8) != (PCOld >> 8);
 			if ( PageChanged )
 			{
-				Cycles -= 2;
+				Cycles--;
 			}
 		}
 	};
