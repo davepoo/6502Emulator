@@ -4,20 +4,24 @@ Learning how a CPU works by emulating one.
 This code was written during the youtube video : https://youtu.be/qJgsuQoy9bc
 
 
-# 11/2020 Notes / TODO
+# 11/2020 NOTES / TODO
 
 * All 6502 legal opcodes emulated
 * Decimal mode is not handled
 * Test program [/Klaus2m5/6502_65C02_functional_tests](https://github.com/Klaus2m5/6502_65C02_functional_tests) - will succeed if decimal is disabled.
-* INS_JMP_ABS, see notes about bug in 6502 for correct emulation 
 * Counting cycles individually for each part of an instruction is cumbersome and probably should just deduct the correct number at the end of the instruction.
 * There is no way to issue and interrupt to this virtual CPU
 * There are no hooks for debugging.
 * There is is no dissasembler or UI, this is just the CPU emulator & units test.
 * There are no asserts if you write memory outside of the bounds (it will overwrite memory)
 * Illegal opcodes are not implemented, the program will throw an exception.
+
+# Issues
+
+*  superkplunk - I think you have a bug in your addressing methods when calculating extra cycle if passing a page boundary (AddrAbsoluteX, AddrAbsoluteY, AddrIndirectY). You are not actually checking if you pass a page boundary - only checking if the value you are adding to the address is >= 255. Guessing your tests for this one aren't robust enough.
 * Does the BRK command break when interrupts are disabled? that needs testing.
 * PLP clears the break flag when executed? is this correct?
+* INS_JMP_ABS, see notes about bug in 6502 for correct emulation 
 
 
 # What did we learn from this?
