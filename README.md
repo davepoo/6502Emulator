@@ -18,7 +18,6 @@ This code was written during the youtube video : https://youtu.be/qJgsuQoy9bc
 
 # Issues
 
-*  superkplunk - I think you have a bug in your addressing methods when calculating extra cycle if passing a page boundary (AddrAbsoluteX, AddrAbsoluteY, AddrIndirectY). You are not actually checking if you pass a page boundary - only checking if the value you are adding to the address is >= 255. Guessing your tests for this one aren't robust enough.
 * Does the BRK command break when interrupts are disabled? that needs testing.
 * PLP clears the break flag when executed? is this correct?
 * INS_JMP_ABS, see notes about bug in 6502 for correct emulation 
