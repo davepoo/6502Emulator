@@ -468,7 +468,7 @@ m6502::s32 m6502::CPU::Execute( s32 Cycles, Mem & memory )
 			Cycles -= 2;
 		} break;
 		//TODO:
-		//An original 6502 has does not correctly fetch the target 
+		//An original 6502 does not correctly fetch the target 
 		//address if the indirect vector falls on a page boundary
 		//( e.g.$xxFF where xx is any value from $00 to $FF ).
 		//In this case fetches the LSB from $xxFF as expected but 
