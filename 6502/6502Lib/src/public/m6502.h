@@ -23,7 +23,7 @@ struct m6502::Mem
 	static constexpr u32 MAX_MEM = 1024 * 64;
 	Byte Data[MAX_MEM];
 
-	void Initialise()
+	void Initialize()
 	{
 		for ( u32 i = 0; i < MAX_MEM; i++ )
 		{
@@ -82,7 +82,7 @@ struct m6502::CPU
 		SP = 0xFF;
 		Flag.C = Flag.Z = Flag.I = Flag.D = Flag.B = Flag.V = Flag.N = 0;
 		A = X = Y = 0;
-		memory.Initialise();
+		memory.Initialize();
 	}
 
 	Byte FetchByte( s32& Cycles, const Mem& memory )
@@ -466,3 +466,4 @@ struct m6502::CPU
 	*	- See "STA (Indirect,Y) */
 	Word AddrIndirectY_6( s32& Cycles, const Mem& memory );
 };
+
