@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -30,7 +32,6 @@ TEST_F( M6502TransferRegistgerTests, TAXCanTransferANonNegativeNonZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0x42;
 	cpu.X = 0x32;
 	cpu.Flag.Z = true;
@@ -55,7 +56,6 @@ TEST_F( M6502TransferRegistgerTests, TAXCanTransferANonNegativeZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0x0;
 	cpu.X = 0x32;
 	cpu.Flag.Z = false;
@@ -80,7 +80,6 @@ TEST_F( M6502TransferRegistgerTests, TAXCanTransferANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0b10001011;
 	cpu.X = 0x32;
 	cpu.Flag.Z = true;
@@ -105,7 +104,6 @@ TEST_F( M6502TransferRegistgerTests, TAYCanTransferANonNegativeNonZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0x42;
 	cpu.Y = 0x32;
 	cpu.Flag.Z = true;
@@ -130,7 +128,6 @@ TEST_F( M6502TransferRegistgerTests, TAYCanTransferANonNegativeZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0x0;
 	cpu.Y = 0x32;
 	cpu.Flag.Z = false;
@@ -155,7 +152,6 @@ TEST_F( M6502TransferRegistgerTests, TAYCanTransferANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.A = 0b10001011;
 	cpu.Y = 0x32;
 	cpu.Flag.Z = true;
@@ -180,7 +176,6 @@ TEST_F( M6502TransferRegistgerTests, TXACanTransferANonNegativeNonZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0x42;
 	cpu.A = 0x32;
 	cpu.Flag.Z = true;
@@ -205,7 +200,6 @@ TEST_F( M6502TransferRegistgerTests, TXACanTransferANonNegativeZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0x0;
 	cpu.A = 0x32;
 	cpu.Flag.Z = false;
@@ -230,7 +224,6 @@ TEST_F( M6502TransferRegistgerTests, TXACanTransferANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0b10001011;
 	cpu.A = 0x32;
 	cpu.Flag.Z = true;
@@ -255,7 +248,6 @@ TEST_F( M6502TransferRegistgerTests, TYACanTransferANonNegativeNonZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0x42;
 	cpu.A = 0x32;
 	cpu.Flag.Z = true;
@@ -280,7 +272,6 @@ TEST_F( M6502TransferRegistgerTests, TYACanTransferANonNegativeZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0x0;
 	cpu.A = 0x32;
 	cpu.Flag.Z = false;
@@ -305,7 +296,6 @@ TEST_F( M6502TransferRegistgerTests, TYACanTransferANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0b10001011;
 	cpu.A = 0x32;
 	cpu.Flag.Z = true;

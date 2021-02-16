@@ -73,12 +73,8 @@ struct m6502::CPU
 
 	void Reset( Mem& memory )
 	{
-		Reset( 0xFFFC, memory );
-	}
-
-	void Reset( Word ResetVector, Mem& memory )
-	{
-		PC = ResetVector;
+	    Word StartAddress = memory[0xFFFC] | memory[0xFFFD] << 8;
+		PC = StartAddress;
 		SP = 0xFF;
 		Flag.C = Flag.Z = Flag.I = Flag.D = Flag.B = Flag.V = Flag.N = 0;
 		A = X = Y = 0;
@@ -418,8 +414,8 @@ struct m6502::CPU
 		Flag.N = (Register & NegativeFlagBit) > 0;
 	}
 
-	/** @return the address that the program was loading into, or 0 if no program */
-	Word LoadPrg( const Byte* Program, u32 NumBytes, Mem& memory ) const;
+	/** Load a Program into memory at the given LoadAddress and set up the RESET vector to that location. */
+	void LoadPrg( const Word LoadAddress, const Byte* Program, u32 NumBytes, Mem& memory ) const;
 
 	/** printf the registers, program counter etc */
 	void PrintStatus() const;

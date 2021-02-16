@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -87,14 +89,17 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
-		Byte* Register = &cpu.A;
-		Byte Opcode = CPU::INS_CMP;
+		Byte* Register;
+		Byte Opcode;
 		switch ( RegisterToCompare )
 		{
+		case ERegister::A:
+		    Register =  &cpu.A;
+		    Opcode = CPU::INS_CMP;
+		    break;
 		case ERegister::X:
 			Register = &cpu.X;
 			Opcode = CPU::INS_CPX;
@@ -103,7 +108,7 @@ public:
 			Register = &cpu.Y;
 			Opcode = CPU::INS_CPY;
 			break;
-		};
+		}
 		*Register = Test.RegisterValue;
 
 		mem[0xFF00] = Opcode;
@@ -127,16 +132,19 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
 		
-		Byte* Register = &cpu.A;
-		Byte Opcode = CPU::INS_CMP_ZP;
+		Byte* Register;
+		Byte Opcode;
 		switch ( RegisterToCompare )
 		{
-		case ERegister::X:
+		case ERegister::A:
+            Register = &cpu.A;
+            Opcode = CPU::INS_CMP_ZP;
+            break;
+        case ERegister::X:
 			Register = &cpu.X;
 			Opcode = CPU::INS_CPX_ZP;
 			break;
@@ -144,7 +152,7 @@ public:
 			Register = &cpu.Y;
 			Opcode = CPU::INS_CPY_ZP;
 			break;
-		};
+		}
 		*Register = Test.RegisterValue;
 		mem[0xFF00] = Opcode;
 		mem[0xFF01] = 0x42;
@@ -168,7 +176,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
@@ -197,15 +204,18 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
 
-		Byte* Register = &cpu.A;
-		Byte Opcode = CPU::INS_CMP_ABS;
+		Byte* Register;
+		Byte Opcode;
 		switch ( RegisterToCompare )
 		{
+		case ERegister::A:
+            Register = &cpu.A;
+            Opcode = CPU::INS_CMP_ABS;
+		    break;
 		case ERegister::X:
 			Register = &cpu.X;
 			Opcode = CPU::INS_CPX_ABS;
@@ -214,7 +224,7 @@ public:
 			Register = &cpu.Y;
 			Opcode = CPU::INS_CPY_ABS;
 			break;
-		};
+		}
 		*Register = Test.RegisterValue;
 
 		mem[0xFF00] = Opcode;
@@ -240,7 +250,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
@@ -270,7 +279,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
@@ -300,7 +308,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;
@@ -331,7 +338,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = !Test.ExpectC;
 		cpu.Flag.Z = !Test.ExpectZ;
 		cpu.Flag.N = !Test.ExpectN;

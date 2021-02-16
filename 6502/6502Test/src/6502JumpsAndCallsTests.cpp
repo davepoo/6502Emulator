@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -21,7 +23,6 @@ TEST_F( M6502JumpsAndCallsTests, CanJumpToASubroutineAndJumpBackAgain )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_JSR;
 	mem[0xFF01] = 0x00;
 	mem[0xFF02] = 0x80;
@@ -44,7 +45,6 @@ TEST_F( M6502JumpsAndCallsTests, JSRDoesNotAffectTheProcessorStatus )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_JSR;
 	mem[0xFF01] = 0x00;
 	mem[0xFF02] = 0x80;
@@ -65,7 +65,6 @@ TEST_F( M6502JumpsAndCallsTests, RTSDoesNotAffectTheProcessorStatus )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_JSR;
 	mem[0xFF01] = 0x00;
 	mem[0xFF02] = 0x80;
@@ -86,7 +85,6 @@ TEST_F( M6502JumpsAndCallsTests, JumpAbsoluteCanJumpToAnNewLocationInTheProgram 
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_JMP_ABS;
 	mem[0xFF01] = 0x00;
 	mem[0xFF02] = 0x80;
@@ -107,7 +105,6 @@ TEST_F( M6502JumpsAndCallsTests, JumpIndirectCanJumpToAnNewLocationInTheProgram 
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_JMP_IND;
 	mem[0xFF01] = 0x00;
 	mem[0xFF02] = 0x80;

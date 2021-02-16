@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -51,7 +53,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.A = Test.A;
 		cpu.Flag.Z = !Test.ExpectZ;
@@ -89,7 +90,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.X = 0x10;
 		cpu.A = Test.A;
@@ -128,7 +128,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.Y = 0x10;
 		cpu.A = Test.A;
@@ -167,7 +166,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.A = Test.A;
 		cpu.Flag.Z = !Test.ExpectZ;
@@ -203,7 +201,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.A = Test.A;
 		cpu.Flag.Z = !Test.ExpectZ;
@@ -240,7 +237,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.X = 0x10;
 		cpu.A = Test.A;
@@ -278,7 +274,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.X = 0x04;
 		cpu.A = Test.A;
@@ -318,7 +313,6 @@ public:
 	{
 		// given:
 		using namespace m6502;
-		cpu.Reset( 0xFF00, mem );
 		cpu.Flag.C = Test.Carry;
 		cpu.Y = 0x04;
 		cpu.A = Test.A;

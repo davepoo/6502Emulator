@@ -1139,23 +1139,18 @@ m6502::Word m6502::CPU::AddrIndirectY_6( s32& Cycles, const Mem& memory )
 }
 
 
-m6502::Word m6502::CPU::LoadPrg( const Byte* Program, u32 NumBytes, Mem& memory ) const
+void m6502::CPU::LoadPrg( const Word LoadAddress, const Byte* Program, u32 NumBytes, Mem& memory ) const
 {
-	Word LoadAddress = 0;
 	if ( Program && NumBytes > 2 )
 	{
-		u32 At = 0;
-		const Word Lo = Program[At++];
-		const Word Hi = Program[At++] << 8;
-		LoadAddress = Lo | Hi;
-		for ( Word i = LoadAddress; i < LoadAddress+NumBytes-2; i++ )
+		for ( Word i = 0; i < NumBytes; i++ )
 		{
-			//TODO: mem copy?
-			memory[i] = Program[At++];
+			memory[LoadAddress + i] = Program[i];
 		}
 	}
-
-	return LoadAddress;
+	// Set up the RESET vector
+    memory[0xFFFC] = LoadAddress & 0xFF;
+    memory[0xFFFD] = LoadAddress >> 8;
 }
 
 void m6502::CPU::PrintStatus() const

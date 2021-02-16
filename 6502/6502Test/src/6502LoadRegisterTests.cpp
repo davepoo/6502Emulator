@@ -9,7 +9,9 @@ public:
 
 	virtual void SetUp()
 	{
-		cpu.Reset( mem );
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
+        cpu.Reset( mem );
 	}
 
 	virtual void TearDown()
@@ -81,9 +83,8 @@ TEST_F( M6502LoadRegisterTests, CPUCanExecuteMoreCyclesThanRequestedIfRequiredBy
 {
 	// given:
 	using namespace m6502;
-	mem[0xFFFC] = CPU::INS_LDA_IM;
-	mem[0xFFFD] = 0x84;
-	CPU CPUCopy = cpu;
+	mem[0xFF00] = CPU::INS_LDA_IM;
+	mem[0xFF01] = 0x84;
 	constexpr s32 NUM_CYCLES = 1;
 
 	//when:
@@ -99,8 +100,8 @@ void M6502LoadRegisterTests::TestLoadRegisterImmediate(
 {
 	// given:
 	using namespace m6502;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x84;
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x84;
 
 	//when:
 	CPU CPUCopy = cpu;
@@ -138,8 +139,8 @@ void M6502LoadRegisterTests::TestLoadRegisterZeroPage(
 {
 	// given:
 	using namespace m6502;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x42;
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0x37;
 
 	//when:
@@ -177,8 +178,8 @@ TEST_F( M6502LoadRegisterTests, LDAImmediateCanAffectTheZeroFlag )
 	// given:
 	using namespace m6502;
 	cpu.A = 0x44;
-	mem[0xFFFC] = CPU::INS_LDA_IM;
-	mem[0xFFFD] = 0x0;
+	mem[0xFF00] = CPU::INS_LDA_IM;
+	mem[0xFF01] = 0x0;
 	CPU CPUCopy = cpu;
 
 	//when:
@@ -197,8 +198,8 @@ void M6502LoadRegisterTests::TestLoadRegisterZeroPageX(
 	// given:
 	using namespace m6502;
 	cpu.X = 5;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x42;
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x42;
 	mem[0x0047] = 0x37;
 	CPU CPUCopy = cpu;
 
@@ -220,8 +221,8 @@ void M6502LoadRegisterTests::TestLoadRegisterZeroPageY(
 	// given:
 	using namespace m6502;
 	cpu.Y = 5;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x42;
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x42;
 	mem[0x0047] = 0x37;
 	CPU CPUCopy = cpu;
 
@@ -259,8 +260,8 @@ TEST_F( M6502LoadRegisterTests, LDAZeroPageXCanLoadAValueIntoTheARegisterWhenItW
 	// given:
 	using namespace m6502;
 	cpu.X = 0xFF;
-	mem[0xFFFC] = CPU::INS_LDA_ZPX;
-	mem[0xFFFD] = 0x80;
+	mem[0xFF00] = CPU::INS_LDA_ZPX;
+	mem[0xFF01] = 0x80;
 	mem[0x007F] = 0x37;
 
 	//when:
@@ -282,9 +283,9 @@ void M6502LoadRegisterTests::TestLoadRegisterAbsolute(
 	// given:
 	cpu.Flag.Z = cpu.Flag.N = true;
 	using namespace m6502;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x80;
-	mem[0xFFFE] = 0x44;	//0x4480
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x80;
+	mem[0xFF02] = 0x44;	//0x4480
 	mem[0x4480] = 0x37;
 	constexpr s32 EXPECTED_CYCLES = 4;
 	CPU CPUCopy = cpu;
@@ -326,9 +327,9 @@ void M6502LoadRegisterTests::TestLoadRegisterAbsoluteX(
 	cpu.Flag.Z = cpu.Flag.N = true;
 	using namespace m6502;
 	cpu.X = 1;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x80;
-	mem[0xFFFE] = 0x44;	//0x4480
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x80;
+	mem[0xFF02] = 0x44;	//0x4480
 	mem[0x4481] = 0x37;
 	constexpr s32 EXPECTED_CYCLES = 4;
 	CPU CPUCopy = cpu;
@@ -352,9 +353,9 @@ void M6502LoadRegisterTests::TestLoadRegisterAbsoluteY(
 	using namespace m6502;
 	cpu.Flag.Z = cpu.Flag.N = true;
 	cpu.Y = 1;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0x80;
-	mem[0xFFFE] = 0x44;	//0x4480
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0x80;
+	mem[0xFF02] = 0x44;	//0x4480
 	mem[0x4481] = 0x37;
 	constexpr s32 EXPECTED_CYCLES = 4;
 	CPU CPUCopy = cpu;
@@ -395,9 +396,9 @@ void M6502LoadRegisterTests::TestLoadRegisterAbsoluteXWhenCrossingPage(
 	// given:
 	using namespace m6502;
 	cpu.X = 0x1;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0xFF;
-	mem[0xFFFE] = 0x44;	//0x44FF
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0xFF;
+	mem[0xFF02] = 0x44;	//0x44FF
 	mem[0x4500] = 0x37;	//0x44FF+0x1 crosses page boundary!
 	constexpr s32 EXPECTED_CYCLES = 5;
 	CPU CPUCopy = cpu;
@@ -438,9 +439,9 @@ void M6502LoadRegisterTests::TestLoadRegisterAbsoluteYWhenCrossingPage(
 	// given:
 	using namespace m6502;
 	cpu.Y = 0x1;
-	mem[0xFFFC] = OpcodeToTest;
-	mem[0xFFFD] = 0xFF;
-	mem[0xFFFE] = 0x44;	//0x44FF
+	mem[0xFF00] = OpcodeToTest;
+	mem[0xFF01] = 0xFF;
+	mem[0xFF02] = 0x44;	//0x44FF
 	mem[0x4500] = 0x37;	//0x44FF+0x1 crosses page boundary!
 	constexpr s32 EXPECTED_CYCLES = 5;
 	CPU CPUCopy = cpu;
@@ -474,8 +475,8 @@ TEST_F( M6502LoadRegisterTests, LDAIndirectXCanLoadAValueIntoTheARegister )
 	using namespace m6502;
 	cpu.Flag.Z = cpu.Flag.N = true;
 	cpu.X = 0x04;
-	mem[0xFFFC] = CPU::INS_LDA_INDX;
-	mem[0xFFFD] = 0x02;
+	mem[0xFF00] = CPU::INS_LDA_INDX;
+	mem[0xFF01] = 0x02;
 	mem[0x0006] = 0x00;	//0x2 + 0x4
 	mem[0x0007] = 0x80;	
 	mem[0x8000] = 0x37;
@@ -499,8 +500,8 @@ TEST_F( M6502LoadRegisterTests, LDAIndirectYCanLoadAValueIntoTheARegister )
 	using namespace m6502;
 	cpu.Flag.Z = cpu.Flag.N = true;
 	cpu.Y = 0x04;
-	mem[0xFFFC] = CPU::INS_LDA_INDY;
-	mem[0xFFFD] = 0x02;
+	mem[0xFF00] = CPU::INS_LDA_INDY;
+	mem[0xFF01] = 0x02;
 	mem[0x0002] = 0x00;	
 	mem[0x0003] = 0x80;
 	mem[0x8004] = 0x37;	//0x8000 + 0x4
@@ -523,8 +524,8 @@ TEST_F( M6502LoadRegisterTests, LDAIndirectYCanLoadAValueIntoTheARegisterWhenItC
 	// given:
 	using namespace m6502;
 	cpu.Y = 0x1;
-	mem[0xFFFC] = CPU::INS_LDA_INDY;
-	mem[0xFFFD] = 0x05;
+	mem[0xFF00] = CPU::INS_LDA_INDY;
+	mem[0xFF01] = 0x05;
 	mem[0x0005] = 0xFF;
 	mem[0x0006] = 0x80;
 	mem[0x8100] = 0x37;	//0x80FF + 0x1

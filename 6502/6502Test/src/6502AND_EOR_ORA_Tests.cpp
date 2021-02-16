@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0xFC;
+        mem[0xFFFD] = 0x2F;
 		cpu.Reset( mem );
 	}
 
@@ -41,13 +43,10 @@ public:
 		{
 		case ELogicalOp::And:
 			return A & B;
-			break;
 		case ELogicalOp::Or:
 			return A | B;
-			break;
 		case ELogicalOp::Eor:
 			return A ^ B;
-			break;
 		}
 
 		throw - 1; //invalid Logical Op
@@ -62,16 +61,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_IM;
+			mem[0x2FFC] = CPU::INS_AND_IM;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_IM;
+			mem[0x2FFC] = CPU::INS_ORA_IM;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_IM;
+			mem[0x2FFC] = CPU::INS_EOR_IM;
 			break;
 		}
-		mem[0xFFFD] = 0x84;
+		mem[0x2FFD] = 0x84;
 
 		//when:
 		CPU CPUCopy = cpu;
@@ -95,16 +94,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ZP;
+			mem[0x2FFC] = CPU::INS_AND_ZP;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ZP;
+			mem[0x2FFC] = CPU::INS_ORA_ZP;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ZP;
+			mem[0x2FFC] = CPU::INS_EOR_ZP;
 			break;
 		}
-		mem[0xFFFD] = 0x42;
+		mem[0x2FFD] = 0x42;
 		mem[0x0042] = 0x37;
 
 		//when:
@@ -130,16 +129,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ZPX;
+			mem[0x2FFC] = CPU::INS_AND_ZPX;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ZPX;
+			mem[0x2FFC] = CPU::INS_ORA_ZPX;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ZPX;
+			mem[0x2FFC] = CPU::INS_EOR_ZPX;
 			break;
 		}
-		mem[0xFFFD] = 0x42;
+		mem[0x2FFD] = 0x42;
 		mem[0x0047] = 0x37;
 		CPU CPUCopy = cpu;
 
@@ -165,17 +164,17 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ABS;
+			mem[0x2FFC] = CPU::INS_AND_ABS;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ABS;
+			mem[0x2FFC] = CPU::INS_ORA_ABS;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ABS;
+			mem[0x2FFC] = CPU::INS_EOR_ABS;
 			break;
 		}
-		mem[0xFFFD] = 0x80;
-		mem[0xFFFE] = 0x44;	//0x4480
+		mem[0x2FFD] = 0x80;
+		mem[0x2FFE] = 0x44;	//0x4480
 		mem[0x4480] = 0x37;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -203,17 +202,17 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ABSX;
+			mem[0x2FFC] = CPU::INS_AND_ABSX;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ABSX;
+			mem[0x2FFC] = CPU::INS_ORA_ABSX;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ABSX;
+			mem[0x2FFC] = CPU::INS_EOR_ABSX;
 			break;
 		}
-		mem[0xFFFD] = 0x80;
-		mem[0xFFFE] = 0x44;	//0x4480
+		mem[0x2FFD] = 0x80;
+		mem[0x2FFE] = 0x44;	//0x4480
 		mem[0x4481] = 0x37;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -241,17 +240,17 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ABSY;
+			mem[0x2FFC] = CPU::INS_AND_ABSY;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ABSY;
+			mem[0x2FFC] = CPU::INS_ORA_ABSY;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ABSY;
+			mem[0x2FFC] = CPU::INS_EOR_ABSY;
 			break;
 		}
-		mem[0xFFFD] = 0x80;
-		mem[0xFFFE] = 0x44;	//0x4480
+		mem[0x2FFD] = 0x80;
+		mem[0x2FFE] = 0x44;	//0x4480
 		mem[0x4481] = 0x37;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -278,17 +277,17 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ABSY;
+			mem[0x2FFC] = CPU::INS_AND_ABSY;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ABSY;
+			mem[0x2FFC] = CPU::INS_ORA_ABSY;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ABSY;
+			mem[0x2FFC] = CPU::INS_EOR_ABSY;
 			break;
 		}
-		mem[0xFFFD] = 0x02;
-		mem[0xFFFE] = 0x44;	//0x4402
+		mem[0x2FFD] = 0x02;
+		mem[0x2FFE] = 0x44;	//0x4402
 		mem[0x4501] = 0x37;	//0x4402+0xFF crosses page boundary!
 		constexpr s32 EXPECTED_CYCLES = 5;
 		CPU CPUCopy = cpu;
@@ -315,17 +314,17 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ABSX;
+			mem[0x2FFC] = CPU::INS_AND_ABSX;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ABSX;
+			mem[0x2FFC] = CPU::INS_ORA_ABSX;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ABSX;
+			mem[0x2FFC] = CPU::INS_EOR_ABSX;
 			break;
 		}
-		mem[0xFFFD] = 0x02;
-		mem[0xFFFE] = 0x44;	//0x4402
+		mem[0x2FFD] = 0x02;
+		mem[0x2FFE] = 0x44;	//0x4402
 		mem[0x4501] = 0x37;	//0x4402+0xFF crosses page boundary!
 		constexpr s32 EXPECTED_CYCLES = 5;
 		CPU CPUCopy = cpu;
@@ -353,16 +352,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_INDX;
+			mem[0x2FFC] = CPU::INS_AND_INDX;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_INDX;
+			mem[0x2FFC] = CPU::INS_ORA_INDX;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_INDX;
+			mem[0x2FFC] = CPU::INS_EOR_INDX;
 			break;
 		}
-		mem[0xFFFD] = 0x02;
+		mem[0x2FFD] = 0x02;
 		mem[0x0006] = 0x00;	//0x2 + 0x4
 		mem[0x0007] = 0x80;
 		mem[0x8000] = 0x37;
@@ -392,16 +391,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_INDY;
+			mem[0x2FFC] = CPU::INS_AND_INDY;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_INDY;
+			mem[0x2FFC] = CPU::INS_ORA_INDY;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_INDY;
+			mem[0x2FFC] = CPU::INS_EOR_INDY;
 			break;
 		}
-		mem[0xFFFD] = 0x02;
+		mem[0x2FFD] = 0x02;
 		mem[0x0002] = 0x00;
 		mem[0x0003] = 0x80;
 		mem[0x8004] = 0x37;	//0x8000 + 0x4
@@ -430,16 +429,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_INDY;
+			mem[0x2FFC] = CPU::INS_AND_INDY;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_INDY;
+			mem[0x2FFC] = CPU::INS_ORA_INDY;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_INDY;
+			mem[0x2FFC] = CPU::INS_EOR_INDY;
 			break;
 		}
-		mem[0xFFFD] = 0x02;
+		mem[0x2FFD] = 0x02;
 		mem[0x0002] = 0x02;
 		mem[0x0003] = 0x80;
 		mem[0x8101] = 0x37;	//0x8002 + 0xFF
@@ -469,16 +468,16 @@ public:
 		switch ( LogicalOp )
 		{
 		case ELogicalOp::And:
-			mem[0xFFFC] = CPU::INS_AND_ZPX;
+			mem[0x2FFC] = CPU::INS_AND_ZPX;
 			break;
 		case ELogicalOp::Or:
-			mem[0xFFFC] = CPU::INS_ORA_ZPX;
+			mem[0x2FFC] = CPU::INS_ORA_ZPX;
 			break;
 		case ELogicalOp::Eor:
-			mem[0xFFFC] = CPU::INS_EOR_ZPX;
+			mem[0x2FFC] = CPU::INS_EOR_ZPX;
 			break;
 		}
-		mem[0xFFFD] = 0x80;
+		mem[0x2FFD] = 0x80;
 		mem[0x007F] = 0x37;
 
 		//when:
@@ -537,8 +536,8 @@ TEST_F( M6502AndEorOraBitTests, TestLogicalOpEorImmediateCanAffectZeroFlag )
 	// given:
 	using namespace m6502;
 	cpu.A = 0xCC;
-	mem[0xFFFC] = CPU::INS_EOR_IM;
-	mem[0xFFFD] = cpu.A;
+	mem[0x2FFC] = CPU::INS_EOR_IM;
+	mem[0x2FFD] = cpu.A;
 	CPU CPUCopy = cpu;
 
 	//when:
@@ -705,10 +704,9 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPage )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0xCC;
-	mem[0xFFFC] = CPU::INS_BIT_ZP;	
-	mem[0xFFFD] = 0x42;
+	mem[0x2FFC] = CPU::INS_BIT_ZP;
+	mem[0x2FFD] = 0x42;
 	mem[0x0042] = 0xCC;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 3;
 
 	//when:
@@ -728,10 +726,9 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZero )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = true;
 	cpu.A = 0xCC;
-	mem[0xFFFC] = CPU::INS_BIT_ZP;
-	mem[0xFFFD] = 0x42;
+	mem[0x2FFC] = CPU::INS_BIT_ZP;
+	mem[0x2FFD] = 0x42;
 	mem[0x0042] = 0x33;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 3;
 
 	//when:
@@ -751,10 +748,9 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZeroBits6And7Zero )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0x33;
-	mem[0xFFFC] = CPU::INS_BIT_ZP;
-	mem[0xFFFD] = 0x42;
+	mem[0x2FFC] = CPU::INS_BIT_ZP;
+	mem[0x2FFD] = 0x42;
 	mem[0x0042] = 0xCC;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 3;
 
 	//when:
@@ -774,8 +770,8 @@ TEST_F( M6502AndEorOraBitTests, TestBitZeroPageResultZeroBits6And7Mixed )
 	using namespace m6502;
 	cpu.Flag.V = false;
 	cpu.Flag.N = true;
-	mem[0xFFFC] = CPU::INS_BIT_ZP;
-	mem[0xFFFD] = 0x42;
+	mem[0x2FFC] = CPU::INS_BIT_ZP;
+	mem[0x2FFD] = 0x42;
 	mem[0x0042] = 0b01000000;
 	constexpr s32 EXPECTED_CYCLES = 3;
 
@@ -793,11 +789,10 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsolute )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0xCC;
-	mem[0xFFFC] = CPU::INS_BIT_ABS;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_BIT_ABS;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	mem[0x8000] = 0xCC;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 4;
 
 	//when:
@@ -817,11 +812,10 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZero )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = true;
 	cpu.A = 0xCC;
-	mem[0xFFFC] = CPU::INS_BIT_ABS;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_BIT_ABS;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	mem[0x8000] = 0x33;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 4;
 
 	//when:
@@ -841,11 +835,10 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZeroBit6And7Zero )
 	using namespace m6502;
 	cpu.Flag.V = cpu.Flag.N = false;
 	cpu.A = 0x33;
-	mem[0xFFFC] = CPU::INS_BIT_ABS;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_BIT_ABS;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	mem[0x8000] = 0xCC;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 4;
 
 	//when:
@@ -865,11 +858,10 @@ TEST_F( M6502AndEorOraBitTests, TestBitAbsoluteResultZeroBit6And7Mixed )
 	using namespace m6502;
 	cpu.Flag.V = true;
 	cpu.Flag.N = false;
-	mem[0xFFFC] = CPU::INS_BIT_ABS;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_BIT_ABS;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	mem[0x8000] = 0b10000000;
-	CPU CPUCopy = cpu;
 	constexpr s32 EXPECTED_CYCLES = 4;
 
 	//when:

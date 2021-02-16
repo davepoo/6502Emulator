@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -30,7 +32,6 @@ TEST_F( M6502IncrementDecrementTests, INXCanIncrementAZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0x0;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -53,7 +54,6 @@ TEST_F( M6502IncrementDecrementTests, INXCanIncrement255 )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0xFF;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -76,7 +76,6 @@ TEST_F( M6502IncrementDecrementTests, INXCanIncrementANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0b10001000;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -100,7 +99,6 @@ TEST_F( M6502IncrementDecrementTests, INYCanIncrementAZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0x0;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -123,7 +121,6 @@ TEST_F( M6502IncrementDecrementTests, INYCanIncrement255 )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0xFF;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -146,7 +143,6 @@ TEST_F( M6502IncrementDecrementTests, INYCanIncrementANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0b10001000;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -170,7 +166,6 @@ TEST_F( M6502IncrementDecrementTests, DEYCanDecementAZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0x0;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -193,7 +188,6 @@ TEST_F( M6502IncrementDecrementTests, DEYCanDecrement255 )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0xFF;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -216,7 +210,6 @@ TEST_F( M6502IncrementDecrementTests, DEYCanDecrementANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Y = 0b10001001;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -239,7 +232,6 @@ TEST_F( M6502IncrementDecrementTests, DEXCanDecementAZeroValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0x0;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -262,7 +254,6 @@ TEST_F( M6502IncrementDecrementTests, DEXCanDecrement255 )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0xFF;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -285,7 +276,6 @@ TEST_F( M6502IncrementDecrementTests, DEXCanDecrementANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.X = 0b10001001;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -308,7 +298,6 @@ TEST_F( M6502IncrementDecrementTests, DECCanDecrementAValueInTheZeroPage )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	mem[0xFF00] = CPU::INS_DEC_ZP;
@@ -332,7 +321,6 @@ TEST_F( M6502IncrementDecrementTests, DECCanDecrementAValueInTheZeroPageX )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.X = 0x10;
@@ -357,7 +345,6 @@ TEST_F( M6502IncrementDecrementTests, DECCanDecrementAValueAbsolute )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	mem[0xFF00] = CPU::INS_DEC_ABS;
@@ -382,7 +369,6 @@ TEST_F( M6502IncrementDecrementTests, DECCanDecrementAValueAbsoluteX )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.X = 0x10;
@@ -408,7 +394,6 @@ TEST_F( M6502IncrementDecrementTests, INCCanIncrementAValueInTheZeroPage )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	mem[0xFF00] = CPU::INS_INC_ZP;
@@ -432,7 +417,6 @@ TEST_F( M6502IncrementDecrementTests, INCCanIncrementAValueInTheZeroPageX )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.X = 0x10;
@@ -457,7 +441,6 @@ TEST_F( M6502IncrementDecrementTests, INCCanIncrementAValueAbsolute )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	mem[0xFF00] = CPU::INS_INC_ABS;
@@ -482,7 +465,6 @@ TEST_F( M6502IncrementDecrementTests, INCCanIncrementAValueAbsoluteX )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.X = 0x10;
@@ -523,11 +505,11 @@ TEST_F( M6502IncrementDecrementTests, TestLoadAProgramThatCanIncMemory )
 	jmp start
 	*/
 	Byte TestPrg[] = 
-		{ 0x0,0x10,0xA9,0x00,0x85,0x42,0xE6,0x42,
+		{ 0xA9,0x00,0x85,0x42,0xE6,0x42,
 		0xA6,0x42,0xE8,0x4C,0x04,0x10 };
 
-	Word StartAddress = cpu.LoadPrg( TestPrg, sizeof(TestPrg), mem );
-	cpu.PC = StartAddress;
+	cpu.LoadPrg( 0x1000, TestPrg, sizeof(TestPrg), mem );
+	cpu.Reset( mem );
 
 	//then:
 	for ( m6502::s32 Clock = 1000; Clock > 0; )
