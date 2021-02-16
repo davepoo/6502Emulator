@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -21,7 +23,6 @@ TEST_F( M6502SystemFunctionsTests, NOPWillDoNothingButConsumeACycle )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_NOP;
 	constexpr s32 EXPECTED_CYCLES = 2;
 	CPU CPUCopy = cpu;
@@ -43,12 +44,10 @@ TEST_F( M6502SystemFunctionsTests, BRKWillLoadTheProgramCounterFromTheInterruptV
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_BRK;
 	mem[0xFFFE] = 0x00;
 	mem[0xFFFF] = 0x80;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -62,12 +61,10 @@ TEST_F( M6502SystemFunctionsTests, BRKWillLoadTheProgramCounterFromTheInterruptV
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_BRK;
 	mem[0xFFFE] = 0x00;
 	mem[0xFFFF] = 0x90;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -81,11 +78,9 @@ TEST_F( M6502SystemFunctionsTests, BRKWillSetTheBreakFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.B = false;
 	mem[0xFF00] = CPU::INS_BRK;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -99,7 +94,6 @@ TEST_F( M6502SystemFunctionsTests, BRKWillPush3BytesOntoTheStack )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_BRK;
 	constexpr s32 EXPECTED_CYCLES = 7;
 	CPU CPUCopy = cpu;
@@ -116,7 +110,6 @@ TEST_F( M6502SystemFunctionsTests, BRKWillPushPCandPSOntoTheStack )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_BRK;
 	constexpr s32 EXPECTED_CYCLES = 7;
 	CPU CPUCopy = cpu;
@@ -148,7 +141,6 @@ TEST_F( M6502SystemFunctionsTests, RTICanReturnFromAnInterruptLeavingTheCPUInThe
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	mem[0xFF00] = CPU::INS_BRK;
 	mem[0xFFFE] = 0x00;
 	mem[0xFFFF] = 0x80;

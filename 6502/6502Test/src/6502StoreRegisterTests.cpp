@@ -22,6 +22,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0xFC;
+        mem[0xFFFD] = 0x2F;
 		cpu.Reset( mem );
 	}
 
@@ -36,8 +38,8 @@ public:
 		// given:
 		using namespace m6502;
 		cpu.*Register = 0x2F;
-		mem[0xFFFC] = OpcodeToTest;
-		mem[0xFFFD] = 0x80;
+		mem[0x2FFC] = OpcodeToTest;
+		mem[0x2FFD] = 0x80;
 		mem[0x0080] = 0x00;
 		constexpr s32 EXPECTED_CYCLES = 3;
 		CPU CPUCopy = cpu;
@@ -58,9 +60,9 @@ public:
 		// given:
 		using namespace m6502;
 		cpu.*Register = 0x2F;
-		mem[0xFFFC] = OpcodeToTest;
-		mem[0xFFFD] = 0x00;
-		mem[0xFFFE] = 0x80;
+		mem[0x2FFC] = OpcodeToTest;
+		mem[0x2FFD] = 0x00;
+		mem[0x2FFE] = 0x80;
 		mem[0x8000] = 0x00;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -82,8 +84,8 @@ public:
 		using namespace m6502;
 		cpu.*Register = 0x42;
 		cpu.X = 0x0F;
-		mem[0xFFFC] = OpcodeToTest;
-		mem[0xFFFD] = 0x80;
+		mem[0x2FFC] = OpcodeToTest;
+		mem[0x2FFD] = 0x80;
 		mem[0x008F] = 0x00;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -105,8 +107,8 @@ public:
 		using namespace m6502;
 		cpu.*Register = 0x42;
 		cpu.Y = 0x0F;
-		mem[0xFFFC] = OpcodeToTest;
-		mem[0xFFFD] = 0x80;
+		mem[0x2FFC] = OpcodeToTest;
+		mem[0x2FFD] = 0x80;
 		mem[0x008F] = 0x00;
 		constexpr s32 EXPECTED_CYCLES = 4;
 		CPU CPUCopy = cpu;
@@ -181,9 +183,9 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteXCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.X = 0x0F;
-	mem[0xFFFC] = CPU::INS_STA_ABSX;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_STA_ABSX;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	constexpr s32 EXPECTED_CYCLES = 5;
 	CPU CPUCopy = cpu;
 
@@ -202,9 +204,9 @@ TEST_F( M6502StoreRegisterTests, STAAbsoluteYCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.Y = 0x0F;
-	mem[0xFFFC] = CPU::INS_STA_ABSY;
-	mem[0xFFFD] = 0x00;
-	mem[0xFFFE] = 0x80;
+	mem[0x2FFC] = CPU::INS_STA_ABSY;
+	mem[0x2FFD] = 0x00;
+	mem[0x2FFE] = 0x80;
 	constexpr s32 EXPECTED_CYCLES = 5;
 	CPU CPUCopy = cpu;
 
@@ -223,8 +225,8 @@ TEST_F( M6502StoreRegisterTests, STAIndirectXCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.X = 0x0F;
-	mem[0xFFFC] = CPU::INS_STA_INDX;
-	mem[0xFFFD] = 0x20;
+	mem[0x2FFC] = CPU::INS_STA_INDX;
+	mem[0x2FFD] = 0x20;
 	mem[0x002F] = 0x00;
 	mem[0x0030] = 0x80;
 	mem[0x8000] = 0x00;
@@ -246,8 +248,8 @@ TEST_F( M6502StoreRegisterTests, STAIndirectYCanStoreTheARegisterIntoMemory )
 	using namespace m6502;
 	cpu.A = 0x42;
 	cpu.Y = 0x0F;
-	mem[0xFFFC] = CPU::INS_STA_INDY;
-	mem[0xFFFD] = 0x20;
+	mem[0x2FFC] = CPU::INS_STA_INDY;
+	mem[0x2FFD] = 0x20;
 	mem[0x0020] = 0x00;
 	mem[0x0021] = 0x80;
 	mem[0x8000 + 0x0F] = 0x00;

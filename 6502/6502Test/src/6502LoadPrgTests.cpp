@@ -16,7 +16,7 @@ jmp start
 
 */
 static m6502::Byte TestPrg[] = {
-	0x00, 0x10, 0xA9, 0xFF, 0x85, 0x90,
+	0xA9, 0xFF, 0x85, 0x90,
 	0x8D, 0x00, 0x80, 0x49, 0xCC, 0x4C, 0x02, 0x10 };
 
 static const m6502::u32 NumBytesInPrg = 14;
@@ -29,7 +29,6 @@ public:
 
 	virtual void SetUp()
 	{
-		cpu.Reset( mem );
 	}
 
 	virtual void TearDown()
@@ -43,7 +42,7 @@ TEST_F( M6502LoadPrgTests, TestLoadProgramAProgramIntoTheCorrectAreaOfMemory )
 	using namespace m6502;
 
 	// when:
-	cpu.LoadPrg( TestPrg, NumBytesInPrg, mem );
+	cpu.LoadPrg( 0x1000, TestPrg, NumBytesInPrg, mem );
 
 	//then:
 	EXPECT_EQ( mem[0x0FFF], 0x0 );
@@ -63,8 +62,8 @@ TEST_F( M6502LoadPrgTests, TestLoadProgramAProgramAndExecuteIt )
 	using namespace m6502;
 
 	// when:
-	Word StartAddress = cpu.LoadPrg( TestPrg, NumBytesInPrg, mem );
-	cpu.PC = StartAddress;
+	cpu.LoadPrg( 0x1000, TestPrg, NumBytesInPrg, mem );
+	cpu.Reset( mem );
 
 	//then:
 	for ( m6502::s32 Clock = 1000; Clock > 0; )

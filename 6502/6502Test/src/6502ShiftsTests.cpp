@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -21,14 +23,12 @@ TEST_F( M6502ShiftsTests, ASLCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.A = 1;
 	mem[0xFF00] = CPU::INS_ASL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -45,14 +45,12 @@ TEST_F( M6502ShiftsTests, ASLCanShiftANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
 	cpu.A = 0b11000010;
 	mem[0xFF00] = CPU::INS_ASL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -69,7 +67,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -77,7 +74,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageCanShiftTheValueOfOne )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 1;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -94,7 +90,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageCanShiftANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -102,7 +97,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageCanShiftANegativeValue )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0b11000010;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -119,7 +113,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageXCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -128,7 +121,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageXCanShiftTheValueOfOne )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -145,7 +137,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageXCanShiftANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -154,7 +145,6 @@ TEST_F( M6502ShiftsTests, ASLZeroPageXCanShiftANegativeValue )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0b11000010;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -171,7 +161,6 @@ TEST_F( M6502ShiftsTests, ASLAbsCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -180,7 +169,6 @@ TEST_F( M6502ShiftsTests, ASLAbsCanShiftTheValueOfOne )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -197,7 +185,6 @@ TEST_F( M6502ShiftsTests, ASLAbsCanShiftANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -206,7 +193,6 @@ TEST_F( M6502ShiftsTests, ASLAbsCanShiftANegativeValue )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0b11000010;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -223,7 +209,6 @@ TEST_F( M6502ShiftsTests, ASLAbsXCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -233,7 +218,6 @@ TEST_F( M6502ShiftsTests, ASLAbsXCanShiftTheValueOfOne )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -250,7 +234,6 @@ TEST_F( M6502ShiftsTests, ASLAbsXCanShiftANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -260,7 +243,6 @@ TEST_F( M6502ShiftsTests, ASLAbsXCanShiftANegativeValue )
 	mem[0xFF02] = 0x80;
 	mem[0x8000+0x10] = 0b11000010;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -277,14 +259,12 @@ TEST_F( M6502ShiftsTests, LSRCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
 	cpu.A = 1;
 	mem[0xFF00] = CPU::INS_LSR;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -301,14 +281,12 @@ TEST_F( M6502ShiftsTests, LSRCanShiftAZeroIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.A = 8;
 	mem[0xFF00] = CPU::INS_LSR;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -325,7 +303,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -333,7 +310,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageCanShiftTheValueOfOne )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 1;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -350,7 +326,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageCanShiftAZeroIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -358,7 +333,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageCanShiftAZeroIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 8;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -375,7 +349,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageXCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -384,7 +357,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageXCanShiftTheValueOfOne )
 	mem[0xFF01] = 0x42;
 	mem[0x0042+ 0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -401,7 +373,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageXCanShiftAZeroIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -410,7 +381,6 @@ TEST_F( M6502ShiftsTests, LSRZeroPageXCanShiftAZeroIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042+ 0x10] = 8;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -427,7 +397,6 @@ TEST_F( M6502ShiftsTests, LSRAbsCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -436,7 +405,6 @@ TEST_F( M6502ShiftsTests, LSRAbsCanShiftTheValueOfOne )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -453,7 +421,6 @@ TEST_F( M6502ShiftsTests, LSRAbsCanShiftAZeroIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -462,7 +429,6 @@ TEST_F( M6502ShiftsTests, LSRAbsCanShiftAZeroIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 8;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -479,7 +445,6 @@ TEST_F( M6502ShiftsTests, LSRAbsXCanShiftTheValueOfOne )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -489,7 +454,6 @@ TEST_F( M6502ShiftsTests, LSRAbsXCanShiftTheValueOfOne )
 	mem[0xFF02] = 0x80;
 	mem[0x8000+0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -506,7 +470,6 @@ TEST_F( M6502ShiftsTests, LSRAbsXCanShiftAZeroIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -516,7 +479,6 @@ TEST_F( M6502ShiftsTests, LSRAbsXCanShiftAZeroIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 8;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -535,14 +497,12 @@ TEST_F( M6502ShiftsTests, ROLCanShiftABitOutOfTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
 	cpu.A = 0;
 	mem[0xFF00] = CPU::INS_ROL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -559,14 +519,12 @@ TEST_F( M6502ShiftsTests, ROLCanShiftABitIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
 	cpu.A = 0b10000000;
 	mem[0xFF00] = CPU::INS_ROL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -583,14 +541,12 @@ TEST_F( M6502ShiftsTests, ROLCanShiftZeroWithNoCarry )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
 	cpu.A = 0;
 	mem[0xFF00] = CPU::INS_ROL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -607,14 +563,12 @@ TEST_F( M6502ShiftsTests, ROLCanShiftAValueThatResultInANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
 	cpu.A = 0b01110011;
 	mem[0xFF00] = CPU::INS_ROL;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -633,7 +587,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftABitOutOfTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -641,7 +594,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftABitOutOfTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -658,7 +610,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftABitIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -666,7 +617,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftABitIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0b10000000;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -683,7 +633,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftZeroWithNoCarry )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -691,7 +640,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftZeroWithNoCarry )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -708,7 +656,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftAValueThatResultInANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -716,7 +663,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageCanShiftAValueThatResultInANegativeValue )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0b01110011;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -735,7 +681,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftABitOutOfTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -744,7 +689,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftABitOutOfTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -761,7 +705,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftABitIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -770,7 +713,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftABitIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042+0x10] = 0b10000000;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -787,7 +729,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftZeroWithNoCarry )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -796,7 +737,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftZeroWithNoCarry )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -813,7 +753,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftAValueThatResultInANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -822,7 +761,6 @@ TEST_F( M6502ShiftsTests, ROLZeroPageXCanShiftAValueThatResultInANegativeValue )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0b01110011;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -841,7 +779,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftABitOutOfTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -850,7 +787,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftABitOutOfTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -867,7 +803,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftABitIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -876,7 +811,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftABitIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0b10000000;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -893,7 +827,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftZeroWithNoCarry )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -902,7 +835,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftZeroWithNoCarry )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -919,7 +851,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftAValueThatResultInANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -928,7 +859,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteCanShiftAValueThatResultInANegativeValue )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0b01110011;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -947,7 +877,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftABitOutOfTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = true;
@@ -957,7 +886,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftABitOutOfTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000+0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -974,7 +902,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftABitIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -984,7 +911,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftABitIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 0b10000000;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1001,7 +927,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftZeroWithNoCarry )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = true;
@@ -1011,7 +936,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftZeroWithNoCarry )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1028,7 +952,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftAValueThatResultInANegativeValue )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1038,7 +961,6 @@ TEST_F( M6502ShiftsTests, ROLAbsoluteXCanShiftAValueThatResultInANegativeValue )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 0b01110011;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1057,14 +979,12 @@ TEST_F( M6502ShiftsTests, RORCanShiftTheCarryFlagIntoTheOperand )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
 	cpu.A = 0;
 	mem[0xFF00] = CPU::INS_ROR;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1081,14 +1001,12 @@ TEST_F( M6502ShiftsTests, RORCanShiftAValueIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
 	cpu.A = 1;
 	mem[0xFF00] = CPU::INS_ROR;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1105,14 +1023,12 @@ TEST_F( M6502ShiftsTests, RORCanRotateANumber )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
 	cpu.A = 0b01101101;
 	mem[0xFF00] = CPU::INS_ROR;
 	constexpr s32 EXPECTED_CYCLES = 2;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1131,7 +1047,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanShiftTheCarryFlagIntoTheOperand )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1139,7 +1054,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanShiftTheCarryFlagIntoTheOperand )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1156,7 +1070,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanShiftAValueIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1164,7 +1077,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanShiftAValueIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 1;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1181,7 +1093,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanRotateANumber )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -1189,7 +1100,6 @@ TEST_F( M6502ShiftsTests, RORZeroPageCanRotateANumber )
 	mem[0xFF01] = 0x42;
 	mem[0x0042] = 0b01101101;
 	constexpr s32 EXPECTED_CYCLES = 5;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1208,7 +1118,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanShiftTheCarryFlagIntoTheOperand )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1217,7 +1126,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanShiftTheCarryFlagIntoTheOperand )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1234,7 +1142,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanShiftAValueIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1243,7 +1150,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanShiftAValueIntoTheCarryFlag )
 	mem[0xFF01] = 0x42;
 	mem[0x0042+0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1260,7 +1166,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanRotateANumber )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -1269,7 +1174,6 @@ TEST_F( M6502ShiftsTests, RORZeroXPageCanRotateANumber )
 	mem[0xFF01] = 0x42;
 	mem[0x0042 + 0x10] = 0b01101101;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1288,7 +1192,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanShiftTheCarryFlagIntoTheOperand )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1297,7 +1200,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanShiftTheCarryFlagIntoTheOperand )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1314,7 +1216,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanShiftAValueIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1323,7 +1224,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanShiftAValueIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 1;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1340,7 +1240,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanRotateANumber )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -1349,7 +1248,6 @@ TEST_F( M6502ShiftsTests, RORAbsolutePageCanRotateANumber )
 	mem[0xFF02] = 0x80;
 	mem[0x8000] = 0b01101101;
 	constexpr s32 EXPECTED_CYCLES = 6;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1368,7 +1266,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanShiftTheCarryFlagIntoTheOperand )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1378,7 +1275,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanShiftTheCarryFlagIntoTheOperand )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 0;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1395,7 +1291,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanShiftAValueIntoTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	cpu.Flag.Z = false;
 	cpu.Flag.N = false;
@@ -1405,7 +1300,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanShiftAValueIntoTheCarryFlag )
 	mem[0xFF02] = 0x80;
 	mem[0x8000+0x10] = 1;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );
@@ -1422,7 +1316,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanRotateANumber )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	cpu.Flag.Z = true;
 	cpu.Flag.N = false;
@@ -1432,7 +1325,6 @@ TEST_F( M6502ShiftsTests, RORAbsoluteXPageCanRotateANumber )
 	mem[0xFF02] = 0x80;
 	mem[0x8000 + 0x10] = 0b01101101;
 	constexpr s32 EXPECTED_CYCLES = 7;
-	CPU CPUCopy = cpu;
 
 	// when:
 	const s32 ActualCycles = cpu.Execute( EXPECTED_CYCLES, mem );

@@ -9,6 +9,8 @@ public:
 
 	virtual void SetUp()
 	{
+        mem[0xFFFC] = 0x00;
+        mem[0xFFFD] = 0xFF;
 		cpu.Reset( mem );
 	}
 
@@ -21,7 +23,6 @@ TEST_F( M6502StatusFlagChangeTests, CLCWillClearTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = true;
 	mem[0xFF00] = CPU::INS_CLC;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -45,7 +46,6 @@ TEST_F( M6502StatusFlagChangeTests, SECWillSetTheCarryFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.C = false;
 	mem[0xFF00] = CPU::INS_SEC;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -69,7 +69,6 @@ TEST_F( M6502StatusFlagChangeTests, CLDWillClearTheDecimalFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.D = true;
 	mem[0xFF00] = CPU::INS_CLD;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -93,7 +92,6 @@ TEST_F( M6502StatusFlagChangeTests, SEDWillSetTheDecimalFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.D = false;
 	mem[0xFF00] = CPU::INS_SED;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -117,7 +115,6 @@ TEST_F( M6502StatusFlagChangeTests, CLIWillClearTheInterruptFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.I = true;
 	mem[0xFF00] = CPU::INS_CLI;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -141,7 +138,6 @@ TEST_F( M6502StatusFlagChangeTests, SEIWillSetTheInterruptFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.I = false;
 	mem[0xFF00] = CPU::INS_SEI;
 	constexpr s32 EXPECTED_CYCLES = 2;
@@ -165,7 +161,6 @@ TEST_F( M6502StatusFlagChangeTests, CLVWillClearTheOverflowFlag )
 {
 	// given:
 	using namespace m6502;
-	cpu.Reset( 0xFF00, mem );
 	cpu.Flag.V = true;
 	mem[0xFF00] = CPU::INS_CLV;
 	constexpr s32 EXPECTED_CYCLES = 2;
